@@ -6,8 +6,6 @@ from utils import criterioDiArresto
 def solve(A, b, tol, maxIter):
     n = A.shape[0]
 
-    print("\n\n", A, "\n\n")
-
     xnew = np.random.rand(n)
     xold = xnew + 1
     k = 0
