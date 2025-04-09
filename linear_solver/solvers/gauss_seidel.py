@@ -19,14 +19,13 @@ class GaussSeidelSolver(LinearSolver):
 
         xnew = np.array([0] * n)
         xold = xnew + 1
-        k = 0
 
-        while criterioDiArresto(self.A, xnew, self.b, tol, k, max_iter):
+        while criterioDiArresto(self.A, xnew, self.b, tol, self.iterations, max_iter):
             xold = xnew
             xnew = lower_triangular.solve(L, (self.b - B @ xold))
-            k += 1
+            self.iterations += 1
 
-        return xnew, k
+        return xnew
 
 
 def main():

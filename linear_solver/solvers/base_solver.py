@@ -12,11 +12,10 @@ class LinearSolver(ABC):
         self.A = A
         self.b = b
         self.iterations = 0
-        self.execution_time = 0.0
         self.solution = None
 
     @abstractmethod
-    def solve(self, tol=1e-10, max_iter=1000) -> tuple[np.ndarray, int]:
+    def solve(self, tol=1e-10, max_iter=1000) -> np.ndarray:
         """
         Solve the linear system Ax = b.
         :param tol: Tolerance for convergence.

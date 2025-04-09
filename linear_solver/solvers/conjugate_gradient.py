@@ -14,9 +14,7 @@ class ConjugateGradientSolver(LinearSolver):
         rold = self.b - self.A @ xold
         dold = rold
 
-        k = 0
-
-        while criterioDiArresto(self.A, xnew, self.b, tol, k, max_iter):
+        while criterioDiArresto(self.A, xnew, self.b, tol, self.iterations, max_iter):
             alpha = (dold @ rold) / (dold @ self.A @ dold)
             xnew = xold + alpha * dold
             rnew = rold - alpha * self.A @ dold
@@ -27,6 +25,6 @@ class ConjugateGradientSolver(LinearSolver):
             rold = rnew
             dold = dnew
 
-            k += 1
+            self.iterations += 1
 
-        return xnew, k
+        return xnew

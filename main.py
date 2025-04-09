@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.io import mmread
 
+from linear_solver.analysis.benchmark import benchmark
 from linear_solver.solvers import *
 
 
@@ -12,49 +13,32 @@ def main():
     x = np.array([1] * n)
     b = A @ x
 
-    tol = [1e-4, 1e-6, 1e-8, 1e-10]
+    tolerances = [1e-4, 1e-6, 1e-8, 1e-10]
 
     print("Insert max iterations: ")
     maxIter = int(input())
 
-    # Creazione delle istanze dei solutori
-    jacobi = JacobiSolver(A, b)
-    gauss_sidel = GaussSeidelSolver(A, b)
-    gradient = GradientSolver(A, b)
-    conjugate_gradient = ConjugateGradientSolver(A, b)
+    solvers = [JacobiSolver, GaussSeidelSolver, GradientSolver, ConjugateGradientSolver]
 
     # Esecuzione dei solutori con diverse tolleranze
-    for t in tol:
-        print(f"\n\nTolleranza: {t}")
-        start_computation(jacobi, gauss_sidel, gradient, conjugate_gradient, t, maxIter)
+    for tol in tolerances:
+        print(f"\n### Tolleranza: {tol:.0e} ###")
+        for solver_class in solvers:
+            res = benchmark(solver_class, A, b, tol=tol, max_iter=maxIter)
+            print_result(res, x)
+        for solver_class in solvers:
+            res = benchmark(solver_class, A, b, tol=tol, max_iter=maxIter)
+            print_result(res, x)
 
 
-def start_computation(jacobi, gauss_sidel, gradient, conjugate_gradient, tol, maxIter):
-    # Esecuzione e stampa dei risultati per ogni metodo
-    res_jacobi = jacobi.solve(tol, maxIter)
-    print_result("Jacobi", res_jacobi)
+def print_result(result: dict, x_true: np.ndarray):
+    x = result["solution"][0]
+    err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
 
-    res_sidel = gauss_sidel.solve(tol, maxIter)
-    print_result("Gauss-Sidel", res_sidel)
-
-    res_grad = gradient.solve(tol, maxIter)
-    print_result("Gradient", res_grad)
-
-    res_conj = conjugate_gradient.solve(tol, maxIter)
-    print_result("Conjugate Gradient", res_conj)
-
-
-def print_result(method, res):
-    print(f"\n\n{method}")
-    print("Errore:", calculate_error(res))
-    print("Tempo:", res[1])
-    print("Iterazioni:", res[1])
-
-
-def calculate_error(res):
-    # Calcolo dell'errore relativo
-    x = np.array([1] * res[0].shape[0])
-    return np.linalg.norm(res[0] - x) / np.linalg.norm(x)
+    print(f"\n--- {result['solver_class']} ---")
+    print(f"Errore relativo: {err:.6e}")
+    print(f"Iterazioni:     {result['iterations']}")
+    print(f"Tempo (s):      {result['execution_time']:.6f}")
 
 
 if __name__ == "__main__":

@@ -11,13 +11,12 @@ class GradientSolver(LinearSolver):
 
         xnew = np.array([0] * n)
         xold = xnew
-        k = 0
 
-        while criterioDiArresto(self.A, xnew, self.b, tol, k, max_iter):
+        while criterioDiArresto(self.A, xnew, self.b, tol, self.iterations, max_iter):
             xold = xnew
             r = self.b - self.A @ xold
             d = (np.transpose(r) @ r) / (np.transpose(r) @ (self.A @ r))
             xnew = xold + d * r
-            k += 1
+            self.iterations += 1
 
-        return xnew, k
+        return xnew
