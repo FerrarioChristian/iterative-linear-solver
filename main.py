@@ -26,9 +26,6 @@ def main():
         for solver_class in solvers:
             res = benchmark(solver_class, A, b, tol=tol, max_iter=maxIter)
             print_result(res, x)
-        for solver_class in solvers:
-            res = benchmark(solver_class, A, b, tol=tol, max_iter=maxIter)
-            print_result(res, x)
 
 
 def print_result(result: dict, x_true: np.ndarray):
