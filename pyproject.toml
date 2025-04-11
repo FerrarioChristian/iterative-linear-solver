@@ -1,0 +1,30 @@
+[project]
+name = "linear-solver"
+version = "0.1.0"
+description = "Libreria per risolvere sistemi lineari con metodi iterativi"
+readme = "README.md"
+authors = [
+  { name = "Ferrario Christian", email = "c.ferrario30@campus.unimib.it" },
+  { name = "Lanza Andrea", email = "a.lanza13@campus.unimib.it" },
+]
+requires-python = ">=3.9"
+
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+
+dependencies = [
+  "matplotlib",
+  "numpy",
+  "pandas",
+  "scipy",
+  "seaborn",
+]
+
+[tool.setuptools.packages.find]
+include = [ "linear_solver", "linear_solver.*" ]
