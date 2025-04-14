@@ -7,7 +7,7 @@ from linear_solver.solvers import *
 
 def main():
     # Caricamento della matrice A e del vettore b
-    A = mmread("./matrici/spa1.mtx").toarray()
+    A = mmread("./matrices/spa1.mtx").toarray()
     n = A.shape[0]
 
     x = np.array([1] * n)

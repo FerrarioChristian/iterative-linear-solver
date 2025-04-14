@@ -1,12 +1,21 @@
+from typing import Optional
+
 import numpy as np
 
 from linear_solver.utils import criterioDiArresto
 
-from .base_solver import LinearSolver
+from .base_solver import BaseIterativeSolver
 
 
-class ConjugateGradientSolver(LinearSolver):
-    def solve(self, tol=1e-8, max_iter=1000):
+class ConjugateGradientSolver(BaseIterativeSolver):
+    def solve(
+        self, tol: Optional[float] = None, max_iter: Optional[int] = None
+    ) -> np.ndarray:
+
+        tol = tol if tol is not None else self.tol
+        max_iter = max_iter if max_iter is not None else self.max_iter
+        self._iterations = 0
+
         n = self.A.shape[0]
 
         xnew = np.array([0] * n)
@@ -14,7 +23,7 @@ class ConjugateGradientSolver(LinearSolver):
         rold = self.b - self.A @ xold
         dold = rold
 
-        while criterioDiArresto(self.A, xnew, self.b, tol, self.iterations, max_iter):
+        while criterioDiArresto(self.A, xnew, self.b, tol, self._iterations, max_iter):
             alpha = (dold @ rold) / (dold @ self.A @ dold)
             xnew = xold + alpha * dold
             rnew = rold - alpha * self.A @ dold
@@ -25,6 +34,6 @@ class ConjugateGradientSolver(LinearSolver):
             rold = rnew
             dold = dnew
 
-            self.iterations += 1
+            self._iterations += 1
 
         return xnew

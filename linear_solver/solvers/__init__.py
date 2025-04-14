@@ -1,4 +1,4 @@
-from .base_solver import LinearSolver
+from .base_solver import BaseIterativeSolver
 from .conjugate_gradient import ConjugateGradientSolver
 from .gauss_seidel import GaussSeidelSolver
 from .gradient import GradientSolver
@@ -9,5 +9,5 @@ __all__ = [
     "GaussSeidelSolver",
     "GradientSolver",
     "ConjugateGradientSolver",
-    "LinearSolver",
+    "BaseIterativeSolver",
 ]

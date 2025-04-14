@@ -1,29 +1,36 @@
+from typing import Optional
+
 import numpy as np
 
 from linear_solver.utils import criterioDiArresto
 
 from . import lower_triangular
-from .base_solver import LinearSolver
+from .base_solver import BaseIterativeSolver
 
 
-class GaussSeidelSolver(LinearSolver):
+class GaussSeidelSolver(BaseIterativeSolver):
     """
     Gauss-Seidel method for solving linear systems.
     """
 
-    def solve(self, tol=1e-8, max_iter=1000):
-        n = self.A.shape[0]
+    def solve(
+        self, tol: Optional[float] = None, max_iter: Optional[int] = None
+    ) -> np.ndarray:
+        tol = tol if tol is not None else self.tol
+        max_iter = max_iter if max_iter is not None else self.max_iter
+        self._iterations = 0
 
+        n = self.A.shape[0]
         L = np.tril(self.A)
         B = self.A - L
 
         xnew = np.array([0] * n)
         xold = xnew + 1
 
-        while criterioDiArresto(self.A, xnew, self.b, tol, self.iterations, max_iter):
+        while criterioDiArresto(self.A, xnew, self.b, tol, self._iterations, max_iter):
             xold = xnew
             xnew = lower_triangular.solve(L, (self.b - B @ xold))
-            self.iterations += 1
+            self._iterations += 1
 
         return xnew
 

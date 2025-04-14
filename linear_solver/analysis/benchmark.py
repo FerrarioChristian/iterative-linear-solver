@@ -3,15 +3,13 @@ from typing import Any, Type
 
 import numpy as np
 
-from linear_solver.solvers.base_solver import \
-    LinearSolver  # o il path relativo corretto
+from linear_solver.solvers.base_solver import (
+    BaseIterativeSolver,
+)  # o il path relativo corretto
 
 
 def benchmark(
-    solver_class: Type[LinearSolver],
-    A: np.ndarray,
-    b: np.ndarray,
-    **kwargs
+    solver_class: Type[BaseIterativeSolver], A: np.ndarray, b: np.ndarray, **kwargs
 ) -> dict[str, Any]:
     """
     Esegue il benchmark di un solver: tempo di esecuzione, iterazioni, tolleranza.
@@ -39,6 +37,6 @@ def benchmark(
         "solver_class": solver_class.__name__,
         "solution": solution,
         "execution_time": end - start,
-        "iterations": solver.iterations,
-        "tolerance": kwargs.get("tol", 1e-10)
+        "iterations": solver._iterations,
+        "tolerance": kwargs.get("tol", 1e-10),
     }
