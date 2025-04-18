@@ -30,7 +30,7 @@ class BaseIterativeSolver(ABC):
         :param max_iter: Maximum number of iterations.
         :return: Solution vector x.
         """
-        pass
+        NotImplementedError("You must implement the solve method.")
 
     def get_iterations(self) -> int:
         return self._iterations
