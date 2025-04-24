@@ -49,9 +49,8 @@ def main():
 
 
 def print_result(result: dict, x_true: np.ndarray):
-    x = result["solution"][0]
+    x = result["solution"]
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
-
     print(f"\n--- {result['solver_class']} ---")
     print(f"Errore relativo: {err}")
     print(f"Iterazioni:     {result['iterations']}")

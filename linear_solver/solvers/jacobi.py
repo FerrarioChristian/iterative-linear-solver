@@ -24,7 +24,7 @@ class JacobiSolver(BaseIterativeSolver):
         #print("Superamento criterio convergenza Jacobi: ", np.allclose(D, D.T) and np.all(np.linalg.eigvals(D) > 0) and np.all(np.linalg.eigvals((2*D)-self.A) > 0) and np.allclose((2*D)-self.A, ((2*D)-self.A).T))
 
         xnew = np.array([0] * n)
-        xold = xnew + 1
+        xold = xnew + 0.5
 
         while criterioDiArresto(self.A, xnew, self.b, tol, self._iterations, max_iter):
             xold = xnew

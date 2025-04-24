@@ -24,7 +24,7 @@ class GaussSeidelSolver(BaseIterativeSolver):
         L = np.tril(self.A)
         B = self.A - L
         xnew = np.array([0] * n)
-        xold = xnew + 1
+        xold = xnew + 0.5
 
         while criterioDiArresto(self.A, xnew, self.b, tol, self._iterations, max_iter):
             xold = xnew
