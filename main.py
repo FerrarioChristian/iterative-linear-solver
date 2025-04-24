@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from scipy.io import mmread
-from linear_solver.utils import check_dominance
+from linear_solver.utils import info_matrice
 from linear_solver.analysis.benchmark import benchmark
 from linear_solver.solvers import *
 
@@ -29,8 +29,8 @@ def main():
         n = A.shape[0]
         x = np.array([1] * n)
         b = A @ x
-        print(f"\n📄 Matrice: {matrix}", "|", "Condizionamneto: ", np.linalg.cond(A), "|", "Simmetria: ", np.allclose(A, A.T), "|", "Positività: ", np.all(np.linalg.eigvals(A) > 0), "|", "Dominanza: ", check_dominance(A), "|")
-        
+        info = info_matrice(A)
+        print(f"\n📄 Matrice: {matrix}", "|", "Condizionamneto: ", info["condizionamento"], "|", "Simmetria: ", info["simmetria"], "|", "Positività: ", info["positività"], "|", "Dominanza: ", info["dominanza"], "|")
         for tol in TOLERANCES:
             print(f"\n### Tolleranza: {tol:.0e} ###")
             for solver_class in SOLVERS:
@@ -52,7 +52,7 @@ def print_result(result: dict, x_true: np.ndarray):
     x = result["solution"]
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
     print(f"\n--- {result['solver_class']} ---")
-    print(f"Errore relativo: {err}")
+    print(f"Errore relativo: {err:.0e}")
     print(f"Iterazioni:     {result['iterations']}")
     print(f"Tempo (s):      {result['execution_time']:.6f}")
 

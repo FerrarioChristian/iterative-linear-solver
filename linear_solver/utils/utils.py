@@ -18,13 +18,19 @@ def has_zero_in_diagonal(U: np.ndarray):
             return True
     return False
 
-def check_dominance(A):
+def info_matrice(A):
+        dominanza = True
         for i in range(A.shape[0]):
             diag = abs(A[i, i])  # Diagonal element
             off_diag_sum = np.sum(np.abs(A[i, :])) - diag  # Sum of off-diagonal elements
             if diag < off_diag_sum:
-                return False  # Not diagonally dominant
-        return True
+                dominanza = False
+            return {
+                "condizionamento": np.round(np.linalg.cond(A)),
+                "simmetria": np.allclose(A, A.T),
+                "positività": np.all(np.linalg.eigvals(A) > 0),
+                "dominanza": dominanza,
+            }
 
 def calculate_error(U, x, b):
     return np.linalg.norm(b - np.dot(U, x)) / np.linalg.norm(b)
