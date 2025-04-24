@@ -30,14 +30,14 @@ def main():
         x = np.array([1] * n)
         b = A @ x
         info = info_matrice(A)
-        print(f"\n📄 Matrice: {matrix}", "|", "Condizionamneto: ", info["condizionamento"], "|", "Simmetria: ", info["simmetria"], "|", "Positività: ", info["positività"], "|", "Dominanza: ", info["dominanza"], "|")
+        print(f"\n📄 Matrice: {matrix}", "|", "Condizionamento: ", info["condizionamento"], "|", "Simmetria: ", info["simmetria"], "|", "Positività: ", info["positività"], "|", "Dominanza: ", info["dominanza"], "|")
         for tol in TOLERANCES:
             print(f"\n### Tolleranza: {tol:.0e} ###")
             for solver_class in SOLVERS:
                 res = benchmark(solver_class, A, b, tol=tol, max_iter=maxIter)
                 res["matrix"] = matrix.split("/")[-1]
                 all_results.append(res)
-                print_result(res, x)
+                print_result(res, x, maxIter)
         
     df = pd.DataFrame(all_results)
     df.to_csv("results.csv", index=False)
@@ -48,12 +48,14 @@ def main():
 
 
 
-def print_result(result: dict, x_true: np.ndarray):
+def print_result(result: dict, x_true: np.ndarray, maxIter):
     x = result["solution"]
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
     print(f"\n--- {result['solver_class']} ---")
     print(f"Errore relativo: {err:.0e}")
     print(f"Iterazioni:     {result['iterations']}")
+    if(result['iterations']==maxIter):
+        print("errore: non converge")
     print(f"Tempo (s):      {result['execution_time']:.6f}")
 
 

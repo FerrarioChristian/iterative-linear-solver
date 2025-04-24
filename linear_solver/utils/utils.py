@@ -5,7 +5,7 @@ def criterioDiArresto(r, b,tol, it, maxIter):
     if np.linalg.norm(r)/ b < tol:
         return False
     if it >= maxIter:
-        print("errore: non converge")
+        
         return False
     return True
 
