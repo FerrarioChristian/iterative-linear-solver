@@ -28,8 +28,7 @@ class ConjugateGradientSolver(BaseIterativeSolver):
             alpha = (dold @ rold) / (dold @ h)
             xnew = xold + alpha * dold
             rnew = rold - alpha * h
-            j = self.A @ dold
-            beta = ((j) @ rnew) / ((j) @ dold)
+            beta = ((h) @ rnew) / ((h) @ dold)
             dnew = rnew - beta * dold
 
             xold = xnew
