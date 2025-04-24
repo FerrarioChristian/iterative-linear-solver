@@ -23,7 +23,6 @@ class GaussSeidelSolver(BaseIterativeSolver):
         n = self.A.shape[0]
         L = np.tril(self.A)
         B = self.A - L
-
         xnew = np.array([0] * n)
         xold = xnew + 1
 

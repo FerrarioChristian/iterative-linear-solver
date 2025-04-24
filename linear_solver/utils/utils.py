@@ -18,6 +18,13 @@ def has_zero_in_diagonal(U: np.ndarray):
             return True
     return False
 
+def check_dominance(A):
+        for i in range(A.shape[0]):
+            diag = abs(A[i, i])  # Diagonal element
+            off_diag_sum = np.sum(np.abs(A[i, :])) - diag  # Sum of off-diagonal elements
+            if diag < off_diag_sum:
+                return False  # Not diagonally dominant
+        return True
 
 def calculate_error(U, x, b):
     return np.linalg.norm(b - np.dot(U, x)) / np.linalg.norm(b)

@@ -6,7 +6,7 @@ from linear_solver.utils import criterioDiArresto
 
 from .base_solver import BaseIterativeSolver
 
-
+# A= P-N, se A e P simmetriche e def positive, se 2P-A definita positiva e simmetrica allora si converge
 class JacobiSolver(BaseIterativeSolver):
     def solve(
         self, tol: Optional[float] = None, max_iter: Optional[int] = None
@@ -21,6 +21,7 @@ class JacobiSolver(BaseIterativeSolver):
         D = np.diag(np.diag(self.A))
 
         B = D - self.A
+        #print("Superamento criterio convergenza Jacobi: ", np.allclose(D, D.T) and np.all(np.linalg.eigvals(D) > 0) and np.all(np.linalg.eigvals((2*D)-self.A) > 0) and np.allclose((2*D)-self.A, ((2*D)-self.A).T))
 
         xnew = np.array([0] * n)
         xold = xnew + 1

@@ -4,9 +4,17 @@ from scipy.io import mmread
 
 from linear_solver.analysis.benchmark import benchmark
 from linear_solver.solvers import *
-
+from scipy.sparse import issparse
 
 def main():
+
+    def check_dominance(A):
+        for i in range(A.shape[0]):
+            diag = abs(A[i, i])  # Diagonal element
+            off_diag_sum = np.sum(np.abs(A[i, :])) - diag  # Sum of off-diagonal elements
+            if diag < off_diag_sum:
+                return False  # Not diagonally dominant
+        return True
 
     all_results = []
 
@@ -22,12 +30,14 @@ def main():
         "matrices/vem2.mtx",
     ]
 
+    
     for matrix in MATRICES:
         A = mmread(matrix).toarray()
         n = A.shape[0]
         x = np.array([1] * n)
         b = A @ x
-
+        print(f"\n📄 Matrice: {matrix}", "|", "Condizionamneto: ", np.linalg.cond(A), "|", "Simmetria: ", np.allclose(A, A.T), "|", "Positività: ", np.all(np.linalg.eigvals(A) > 0), "|", "Dominanza: ", check_dominance(A), "|")
+        
         for tol in TOLERANCES:
             print(f"\n### Tolleranza: {tol:.0e} ###")
             for solver_class in SOLVERS:
@@ -35,13 +45,14 @@ def main():
                 res["matrix"] = matrix.split("/")[-1]
                 all_results.append(res)
                 print_result(res, x)
-
+        
     df = pd.DataFrame(all_results)
     df.to_csv("results.csv", index=False)
     df.to_json("results.json", orient="records", lines=True)
 
     print("\n--- Risultati ---")
     print(df)
+
 
 
 def print_result(result: dict, x_true: np.ndarray):
