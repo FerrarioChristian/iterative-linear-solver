@@ -22,8 +22,8 @@ class ConjugateGradientSolver(BaseIterativeSolver):
         xold = xnew
         rold = self.b - self.A @ xold
         dold = rold
-
-        while criterioDiArresto(self.A, xnew, self.b, tol, self._iterations, max_iter):
+        bi = np.linalg.norm(self.b)
+        while criterioDiArresto(rold, bi, tol, self._iterations, max_iter):
             alpha = (dold @ rold) / (dold @ self.A @ dold)
             xnew = xold + alpha * dold
             rnew = rold - alpha * self.A @ dold

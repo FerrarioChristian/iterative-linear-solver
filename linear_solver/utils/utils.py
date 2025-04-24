@@ -1,8 +1,8 @@
 import numpy as np
 
 
-def criterioDiArresto(A, xnew, b, tol, it, maxIter):
-    if np.linalg.norm((A @ xnew) - b, np.inf) / np.linalg.norm(b) < tol:
+def criterioDiArresto(r, b,tol, it, maxIter):
+    if np.linalg.norm(r)/ b < tol:
         return False
     if it >= maxIter:
         print("errore: non converge")

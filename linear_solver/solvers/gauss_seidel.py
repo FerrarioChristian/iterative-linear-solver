@@ -24,11 +24,14 @@ class GaussSeidelSolver(BaseIterativeSolver):
         L = np.tril(self.A)
         B = self.A - L
         xnew = np.array([0] * n)
-        xold = xnew + 0.5
+        xold = xnew + 1
+        r = np.array([1] * n)
+        bi = np.linalg.norm(self.b)
 
-        while criterioDiArresto(self.A, xnew, self.b, tol, self._iterations, max_iter):
+        while criterioDiArresto(r, bi, tol, self._iterations, max_iter):
             xold = xnew
-            xnew = lower_triangular.solve(L, (self.b - B @ xold))
+            r = self.b - self.A@xnew
+            xnew = xold + lower_triangular.solve(L, r)
             self._iterations += 1
 
         return xnew

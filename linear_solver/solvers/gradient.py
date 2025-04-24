@@ -20,8 +20,9 @@ class GradientSolver(BaseIterativeSolver):
 
         xnew = np.array([0] * n)
         xold = xnew
-
-        while criterioDiArresto(self.A, xnew, self.b, tol, self._iterations, max_iter):
+        bi = np.linalg.norm(self.b)
+        r = np.array([1] * n)
+        while criterioDiArresto(r, bi, tol, self._iterations, max_iter):
             xold = xnew
             r = self.b - self.A @ xold
             d = (np.transpose(r) @ r) / (np.transpose(r) @ (self.A @ r))
