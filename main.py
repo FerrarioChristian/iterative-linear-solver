@@ -1,20 +1,13 @@
 import numpy as np
 import pandas as pd
 from scipy.io import mmread
-
+from linear_solver.utils import check_dominance
 from linear_solver.analysis.benchmark import benchmark
 from linear_solver.solvers import *
-from scipy.sparse import issparse
 
 def main():
 
-    def check_dominance(A):
-        for i in range(A.shape[0]):
-            diag = abs(A[i, i])  # Diagonal element
-            off_diag_sum = np.sum(np.abs(A[i, :])) - diag  # Sum of off-diagonal elements
-            if diag < off_diag_sum:
-                return False  # Not diagonally dominant
-        return True
+    
 
     all_results = []
 
@@ -60,7 +53,7 @@ def print_result(result: dict, x_true: np.ndarray):
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
 
     print(f"\n--- {result['solver_class']} ---")
-    print(f"Errore relativo: {err:.6e}")
+    print(f"Errore relativo: {err}")
     print(f"Iterazioni:     {result['iterations']}")
     print(f"Tempo (s):      {result['execution_time']:.6f}")
 
