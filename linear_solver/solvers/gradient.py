@@ -25,7 +25,8 @@ class GradientSolver(BaseIterativeSolver):
         while criterioDiArresto(r, bi, tol, self._iterations, max_iter):
             xold = xnew
             r = self.b - self.A @ xold
-            d = (np.transpose(r) @ r) / (np.transpose(r) @ (self.A @ r))
+            tr = np.transpose(r)
+            d = (tr @ r) / (tr @ (self.A @ r))
             xnew = xold + d * r
             self._iterations += 1
 
