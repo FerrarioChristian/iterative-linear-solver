@@ -3,9 +3,7 @@ from typing import Any, Type
 
 import numpy as np
 
-from linear_solver.solvers.base_solver import (
-    BaseIterativeSolver,
-)  # o il path relativo corretto
+from linear_solver.solvers.base_solver import BaseIterativeSolver
 
 
 def benchmark(
@@ -37,6 +35,6 @@ def benchmark(
         "solver_class": solver_class.__name__,
         "solution": solution,
         "execution_time": end - start,
-        "iterations": solver._iterations,
+        "iterations": solver.get_iterations(),
         "tolerance": kwargs.get("tol", 1e-10),
     }

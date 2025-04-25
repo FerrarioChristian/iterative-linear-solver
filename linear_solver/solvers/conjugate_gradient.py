@@ -2,14 +2,19 @@ from typing import Optional
 
 import numpy as np
 
-from linear_solver.utils import criterioDiArresto
-
-from .base_solver import BaseIterativeSolver
+from linear_solver.convergence.criteria import (
+    StoppingCriterion,
+    default_stopping_criterion,
+)
+from linear_solver.solvers.base_solver import BaseIterativeSolver
 
 
 class ConjugateGradientSolver(BaseIterativeSolver):
     def solve(
-        self, tol: Optional[float] = None, max_iter: Optional[int] = None
+        self,
+        tol: Optional[float] = None,
+        max_iter: Optional[int] = None,
+        stopping_criterion: StoppingCriterion = default_stopping_criterion,
     ) -> np.ndarray:
 
         tol = tol if tol is not None else self.tol
@@ -23,7 +28,7 @@ class ConjugateGradientSolver(BaseIterativeSolver):
         rold = self.b - self.A @ xold
         dold = rold
         bi = np.linalg.norm(self.b)
-        while criterioDiArresto(rold, bi, tol, self._iterations, max_iter):
+        while stopping_criterion(rold, float(bi), tol, self._iterations, max_iter):
             h = self.A @ dold
             alpha = (dold @ rold) / (dold @ h)
             xnew = xold + alpha * dold

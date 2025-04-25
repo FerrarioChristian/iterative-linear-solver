@@ -2,7 +2,10 @@ from typing import Optional
 
 import numpy as np
 
-from linear_solver.utils import criterioDiArresto
+from linear_solver.convergence.criteria import (
+    StoppingCriterion,
+    default_stopping_criterion,
+)
 
 from . import lower_triangular
 from .base_solver import BaseIterativeSolver
@@ -14,7 +17,10 @@ class GaussSeidelSolver(BaseIterativeSolver):
     """
 
     def solve(
-        self, tol: Optional[float] = None, max_iter: Optional[int] = None
+        self,
+        tol: Optional[float] = None,
+        max_iter: Optional[int] = None,
+        stopping_criterion: StoppingCriterion = default_stopping_criterion,
     ) -> np.ndarray:
         tol = tol if tol is not None else self.tol
         max_iter = max_iter if max_iter is not None else self.max_iter
@@ -28,7 +34,7 @@ class GaussSeidelSolver(BaseIterativeSolver):
         r = np.array([1] * n)
         bi = np.linalg.norm(self.b)
 
-        while criterioDiArresto(r, bi, tol, self._iterations, max_iter):
+        while stopping_criterion(r, float(bi), tol, self._iterations, max_iter):
             r = self.b - self.A @ xnew
             xnew = xnew + lower_triangular.solve(L, r)
             self._iterations += 1

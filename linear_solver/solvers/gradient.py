@@ -2,14 +2,20 @@ from typing import Optional
 
 import numpy as np
 
-from linear_solver.utils import criterioDiArresto
+from linear_solver.convergence.criteria import (
+    StoppingCriterion,
+    default_stopping_criterion,
+)
 
 from .base_solver import BaseIterativeSolver
 
 
 class GradientSolver(BaseIterativeSolver):
     def solve(
-        self, tol: Optional[float] = None, max_iter: Optional[int] = None
+        self,
+        tol: Optional[float] = None,
+        max_iter: Optional[int] = None,
+        stopping_criterion: StoppingCriterion = default_stopping_criterion,
     ) -> np.ndarray:
 
         tol = tol if tol is not None else self.tol
@@ -22,7 +28,7 @@ class GradientSolver(BaseIterativeSolver):
         xold = xnew
         bi = np.linalg.norm(self.b)
         r = np.array([1] * n)
-        while criterioDiArresto(r, bi, tol, self._iterations, max_iter):
+        while stopping_criterion(r, float(bi), tol, self._iterations, max_iter):
             xold = xnew
             r = self.b - self.A @ xold
             tr = np.transpose(r)
