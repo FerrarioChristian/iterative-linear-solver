@@ -3,6 +3,11 @@ from typing import Optional
 
 import numpy as np
 
+from linear_solver.convergence.criteria import (
+    StoppingCriterion,
+    default_stopping_criterion,
+)
+
 
 class BaseIterativeSolver(ABC):
     """
@@ -22,7 +27,10 @@ class BaseIterativeSolver(ABC):
 
     @abstractmethod
     def solve(
-        self, tol: Optional[float] = None, max_iter: Optional[int] = None
+        self,
+        tol: Optional[float] = None,
+        max_iter: Optional[int] = None,
+        stopping_criterion: StoppingCriterion = default_stopping_criterion,
     ) -> np.ndarray:
         """
         Solve the linear system Ax = b.
