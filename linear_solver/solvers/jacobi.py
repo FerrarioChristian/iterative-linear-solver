@@ -1,4 +1,5 @@
 from typing import Optional
+from scipy.sparse import diags
 
 import numpy as np
 
@@ -17,9 +18,8 @@ class JacobiSolver(BaseIterativeSolver):
         self._iterations = 0
 
         n = self.A.shape[0]
-        
-        D = np.diag(np.diag(self.A))
-        D = np.linalg.inv(D)
+        D = 1.0 / self.A.diagonal()
+
         xnew = np.array([0] * n)
         xold = xnew + 1
         r = np.array([1] * n)
@@ -27,7 +27,7 @@ class JacobiSolver(BaseIterativeSolver):
         while criterioDiArresto(r, bi, tol, self._iterations, max_iter):
             xold = xnew
             r = self.b - self.A@xnew
-            xnew = xold + D@r
+            xnew = xold + D * r
             self._iterations += 1
             
         return xnew

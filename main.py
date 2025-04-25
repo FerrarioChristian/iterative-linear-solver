@@ -4,16 +4,18 @@ from scipy.io import mmread
 from linear_solver.utils import info_matrice
 from linear_solver.analysis.benchmark import benchmark
 from linear_solver.solvers import *
-
+from scipy.sparse import csr_matrix
+from scipy.sparse import diags
+from linear_solver.utils import chiedi_esame_proprieta
+from linear_solver.utils import num_iterazioni
 def main():
 
     
 
     all_results = []
 
-    print("Insert max iterations: ")
-    maxIter = int(input())
-
+    maxIter = num_iterazioni()
+    siono = chiedi_esame_proprieta()
     TOLERANCES = [1e-4, 1e-6, 1e-8, 1e-10]
     SOLVERS = [JacobiSolver, GaussSeidelSolver, GradientSolver, ConjugateGradientSolver]
     MATRICES = [
@@ -25,12 +27,13 @@ def main():
 
     
     for matrix in MATRICES:
-        A = mmread(matrix).toarray()
+        A = mmread(matrix).tocsr()
         n = A.shape[0]
         x = np.array([1] * n)
         b = A @ x
-        info = info_matrice(A)
-        print(f"\n📄 Matrice: {matrix}", "|", "Condizionamento: ", info["condizionamento"], "|", "Simmetria: ", info["simmetria"], "|", "Positività: ", info["positività"], "|", "Dominanza: ", info["dominanza"], "|")
+        if(siono):
+            info = info_matrice(A)
+            print(f"\n📄 Matrice: {matrix}", "|", "Condizionamento: ", info["condizionamento"], "|", "Simmetria: ", info["simmetria"], "|", "Positività: ", info["positività"], "|", "Dominanza: ", info["dominanza"], "|")
         for tol in TOLERANCES:
             print(f"\n### Tolleranza: {tol:.0e} ###")
             for solver_class in SOLVERS:
