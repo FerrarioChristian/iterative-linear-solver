@@ -25,6 +25,7 @@ class BenchmarkResult:
     iterations: int
     tolerance: float
     matrix: str = "Unknown"
+    relative_error: float = 0.0
 
 
 def benchmark_solver(
@@ -57,5 +58,5 @@ def benchmark_solver(
         solution=solution,
         execution_time=end - start,
         iterations=solver.get_iterations(),
-        tolerance=solver.get_tolerance(),
+        tolerance=solver.tol,
     )

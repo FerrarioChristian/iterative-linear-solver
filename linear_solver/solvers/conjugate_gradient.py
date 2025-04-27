@@ -17,8 +17,8 @@ class ConjugateGradientSolver(BaseIterativeSolver):
         stopping_criterion: StoppingCriterion = default_stopping_criterion,
     ) -> np.ndarray:
 
-        tol = tol if tol is not None else self.tol
-        max_iter = max_iter if max_iter is not None else self.max_iter
+        self.tol = tol if tol is not None else self.tol
+        self.max_iter = max_iter if max_iter is not None else self.max_iter
         self._iterations = 0
 
         n = self.A.shape[0]
@@ -28,7 +28,7 @@ class ConjugateGradientSolver(BaseIterativeSolver):
         rold = self.b - self.A @ xold
         dold = rold
         bi = np.linalg.norm(self.b)
-        while stopping_criterion(rold, float(bi), tol, self._iterations, max_iter):
+        while stopping_criterion(rold, float(bi), self.tol, self._iterations, self.max_iter):
             h = self.A @ dold
             alpha = (dold @ rold) / (dold @ h)
             xnew = xold + alpha * dold

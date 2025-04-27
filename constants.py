@@ -5,7 +5,7 @@ from linear_solver.solvers import (
     ConjugateGradientSolver,
 )
 
-TOLERANCES = [1e-4, 1e-6, 1e-8, 1e-10]
+TOLERANCES = [10e-4, 10e-6, 10e-8, 10e-10]
 SOLVERS = [JacobiSolver, GaussSeidelSolver, GradientSolver, ConjugateGradientSolver]
 MATRICES = [
     "matrices/spa1.mtx",

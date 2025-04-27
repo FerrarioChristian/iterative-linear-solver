@@ -1,4 +1,3 @@
-import argparse
 from pathlib import Path
 
 import numpy as np
@@ -10,63 +9,90 @@ from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
 from linear_solver.analysis.compare_plot import plot_execution_time
 from linear_solver.matrix_analysis.structure import analyze_matrix
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--max-iter", type=int, default=20000, help="Maximum number of iterations"
-)
-parser.add_argument(
-    "--skip-check", action="store_true", help="Skip matrix properties check"
-)
-args = parser.parse_args()
+from cli import parse_arguments, bcolors
 
+
+args = parse_arguments() 
 max_iterations = args.max_iter
 skip_check = args.skip_check
 
-
 def main():
+    df = run_benchmark(
+        MATRICES,
+        SOLVERS,
+        TOLERANCES,
+        max_iterations,
+    )
+
+    save_results(df)
+    print_results(df)
+    visualize_results(df, TOLERANCES) 
+
+def load_matrix(matrix_path):
+    """Carica una matrice da file e la converte in un array denso."""
+    A = mmread(matrix_path)
+    if not isinstance(A, np.ndarray):
+        A = A.toarray()
+    return A
+
+def run_benchmark(matrices, solvers, tolerances, max_iterations):
+    """Esegue il benchmark per i solver e le matrici specificate."""
     all_results = []
 
-    for matrix in MATRICES:
-        A = mmread(matrix)
-        if not isinstance(A, np.ndarray):
-            A = A.toarray()
-
+    for matrix in matrices:
+        A = load_matrix(matrix)
         n = A.shape[0]
         x = np.array([1] * n)
         b = A @ x
 
         print_matrix_properties(matrix, A)
 
-        for tol in TOLERANCES:
-            print(f"\n### Tolleranza: {tol:.0e} ###")
-            for solver_class in SOLVERS:
+        for tol in tolerances:
+            print(bcolors.OKBLUE + f"\n### Tolleranza: {tol:.0e} ###" + bcolors.ENDC)
+            for solver_class in solvers:
                 res = benchmark_solver(
                     solver_class, A, b, tol=tol, max_iter=max_iterations
                 )
                 matrix_path = Path(matrix)
                 res.matrix = matrix_path.name
                 all_results.append(res)
-                print_result(res, x, max_iterations)
+                print_intermediate_result(res, x, max_iterations)
 
-    df = pd.DataFrame(all_results)
-    df.to_csv("results.csv", index=False)
-    df.to_json("results.json", orient="records", lines=True)
+    return pd.DataFrame(all_results)
 
-    print("\n--- Risultati ---")
-    print(df)
+def save_results(df, csv_path="results.csv", json_path="results.json"):
+    """Salva i risultati in formato CSV e JSON."""
+    df.to_csv(csv_path, index=False)
 
+def print_results(df):
+    """Stampa i risultati in modo leggibile."""
+    print("\n--- Risultati per Matrice ---")
     for matrix in df["matrix"].unique():
-        for tol in TOLERANCES:
+        print(f"\nMatrice: {matrix}")
+        # Filtra i risultati per la matrice corrente
+        subset = df[df["matrix"] == matrix].copy()
+        subset.drop(columns=["matrix"], inplace=True)
+        subset.sort_values(by=["tolerance", "solver_class"], inplace=True)
+        subset = subset.drop(columns=["solution"])
+        subset["tolerance"] = subset["tolerance"].apply(lambda x: f"10e{int(np.log10(x) - 1)}")
+        columns_order = ["solver_class", "tolerance", "relative_error", "execution_time", "iterations"]
+        subset = subset[columns_order]
+        print(subset.to_string(index=False))
+
+def visualize_results(df, tolerances):
+    """Genera grafici comparativi per i risultati."""
+    for matrix in df["matrix"].unique():
+        for tol in tolerances:
             subset = df[(df["matrix"] == matrix) & (df["tolerance"] == tol)]
             if not subset.empty:
                 plot_execution_time(subset)
 
-
-def print_result(
+def print_intermediate_result(
     result: BenchmarkResult, x_true: np.ndarray, max_iterations: int
 ) -> None:
     x = result.solution
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
+    result.relative_error = err
 
     print(f"\n--- {result.solver_class} ---")
     print(f"Errore relativo: {err:.2e}")
@@ -74,23 +100,28 @@ def print_result(
     print(f"Tempo (s):       {result.execution_time:.6f}")
 
     if result.iterations == max_iterations:
-        print("Errore: non convergente")
+        print(bcolors.FAIL + "Errore: non convergente" + bcolors.ENDC)
 
 
 def print_matrix_properties(path, A):
-    print()
-    print("======================================================")
-    print(f"Matrice: {path} ", end="")
+    """Stampa le proprietà della matrice in modo leggibile."""
+    print(bcolors.HEADER + "\n======================================================")
+    print(f"Matrice: {path}")
 
-    if not skip_check:
+    if skip_check:
+        print("Analisi delle proprietà della matrice saltata.")
+    else:
         mp = analyze_matrix(A)
-        print(f"| Condizionamento: {mp.condition_number:.2e}")
-        print(f"Simmetria: {mp.is_symmetric} | ", end="")
-        print(f"Definita positiva: {mp.is_positive_definite} | ", end="")
-        print(f"Dominanza diagonale: {mp.is_diagonally_dominant}", end="")
+        properties = [
+            f"Dimensione: {A.shape[0]} x {A.shape[1]}",
+            f"Condizionamento: {mp.condition_number:.2e}",
+            f"Simmetria: {mp.is_symmetric}",
+            f"Definita positiva: {mp.is_positive_definite}",
+            f"Dominanza diagonale: {mp.is_diagonally_dominant}",
+        ]
+        print("\n".join(properties))
 
-    print("\n======================================================")
-
+    print("======================================================" + bcolors.ENDC)
 
 if __name__ == "__main__":
     main()
