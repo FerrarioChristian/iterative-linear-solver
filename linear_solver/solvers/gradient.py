@@ -35,5 +35,7 @@ class GradientSolver(BaseIterativeSolver):
             d = (tr @ r) / (tr @ (self.A @ r))
             xnew = xold + d * r
             self._iterations += 1
+            self._residuals.append(r)
 
+        self._solution = xnew
         return xnew

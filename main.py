@@ -1,25 +1,30 @@
+import argparse
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from scipy.io import mmread
 
-from linear_solver.analysis.benchmark import benchmark
+from constants import MATRICES, SOLVERS, TOLERANCES
+from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
+from linear_solver.analysis.compare_plot import plot_execution_time
 from linear_solver.matrix_analysis.structure import analyze_matrix
-from linear_solver.solvers import *
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--max-iter", type=int, default=20000, help="Maximum number of iterations"
+)
+parser.add_argument(
+    "--skip-check", action="store_true", help="Skip matrix properties check"
+)
+args = parser.parse_args()
+
+max_iterations = args.max_iter
+skip_check = args.skip_check
 
 
 def main():
     all_results = []
-
-    maxIter = int(input("Insert the maximum number of iterations: "))
-
-    TOLERANCES = [1e-4, 1e-6, 1e-8, 1e-10]
-    SOLVERS = [JacobiSolver, GaussSeidelSolver, GradientSolver, ConjugateGradientSolver]
-    MATRICES = [
-        "matrices/spa1.mtx",
-        "matrices/spa2.mtx",
-        "matrices/vem1.mtx",
-        "matrices/vem2.mtx",
-    ]
 
     for matrix in MATRICES:
         A = mmread(matrix)
@@ -35,10 +40,13 @@ def main():
         for tol in TOLERANCES:
             print(f"\n### Tolleranza: {tol:.0e} ###")
             for solver_class in SOLVERS:
-                res = benchmark(solver_class, A, b, tol=tol, max_iter=maxIter)
-                res["matrix"] = matrix.split("/")[-1]
+                res = benchmark_solver(
+                    solver_class, A, b, tol=tol, max_iter=max_iterations
+                )
+                matrix_path = Path(matrix)
+                res.matrix = matrix_path.name
                 all_results.append(res)
-                print_result(res, x, maxIter)
+                print_result(res, x, max_iterations)
 
     df = pd.DataFrame(all_results)
     df.to_csv("results.csv", index=False)
@@ -47,29 +55,41 @@ def main():
     print("\n--- Risultati ---")
     print(df)
 
+    for matrix in df["matrix"].unique():
+        for tol in TOLERANCES:
+            subset = df[(df["matrix"] == matrix) & (df["tolerance"] == tol)]
+            if not subset.empty:
+                plot_execution_time(subset)
 
-def print_result(result: dict, x_true: np.ndarray, maxIter):
-    x = result["solution"]
+
+def print_result(
+    result: BenchmarkResult, x_true: np.ndarray, max_iterations: int
+) -> None:
+    x = result.solution
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
 
-    print(f"\n--- {result['solver_class']} ---")
+    print(f"\n--- {result.solver_class} ---")
     print(f"Errore relativo: {err:.2e}")
-    print(f"Iterazioni:      {result['iterations']}")
-    print(f"Tempo (s):       {result['execution_time']:.6f}")
+    print(f"Iterazioni:      {result.iterations}")
+    print(f"Tempo (s):       {result.execution_time:.6f}")
 
-    if result["iterations"] == maxIter:
+    if result.iterations == max_iterations:
         print("Errore: non convergente")
 
 
 def print_matrix_properties(path, A):
-    mp = analyze_matrix(A)
     print()
     print("======================================================")
-    print(f"Matrice: {path} | Condizionamento: {mp.condition_number:.2e}")
-    print(f"Simmetria: {mp.is_symmetric} | ", end="")
-    print(f"Definita positiva: {mp.is_positive_definite} | ", end="")
-    print(f"Dominanza diagonale: {mp.is_diagonally_dominant}")
-    print("======================================================")
+    print(f"Matrice: {path} ", end="")
+
+    if not skip_check:
+        mp = analyze_matrix(A)
+        print(f"| Condizionamento: {mp.condition_number:.2e}")
+        print(f"Simmetria: {mp.is_symmetric} | ", end="")
+        print(f"Definita positiva: {mp.is_positive_definite} | ", end="")
+        print(f"Dominanza diagonale: {mp.is_diagonally_dominant}", end="")
+
+    print("\n======================================================")
 
 
 if __name__ == "__main__":

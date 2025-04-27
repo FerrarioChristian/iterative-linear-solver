@@ -46,6 +46,12 @@ class BaseIterativeSolver(ABC):
     def get_residuals(self) -> list[float]:
         return self._residuals
 
+    def get_tolerance(self) -> float:
+        return self.tol
+
+    def get_max_iterations(self) -> int:
+        return self.max_iter
+
     def get_solution(self) -> np.ndarray:
         if self._solution is None:
             raise ValueError("Solution not computed yet.")

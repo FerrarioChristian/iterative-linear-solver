@@ -37,5 +37,7 @@ class JacobiSolver(BaseIterativeSolver):
             r = self.b - self.A @ xnew
             xnew = xold + D @ r
             self._iterations += 1
+            self._residuals.append(r)
 
+        self._solution = xnew
         return xnew

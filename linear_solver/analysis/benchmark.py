@@ -1,4 +1,5 @@
 import time
+from dataclasses import dataclass
 from typing import Any, Type
 
 import numpy as np
@@ -6,9 +7,29 @@ import numpy as np
 from linear_solver.solvers.base_solver import BaseIterativeSolver
 
 
-def benchmark(
+@dataclass
+class BenchmarkResult:
+    """
+    Class to store the results of a benchmark.
+    Attributes:
+        solver_class (str): Name of the solver class.
+        solution (np.ndarray): Solution vector.
+        execution_time (float): Time taken to solve the system.
+        iterations (int): Number of iterations taken to converge.
+        tolerance (float): Tolerance used for convergence.
+    """
+
+    solver_class: str
+    solution: np.ndarray
+    execution_time: float
+    iterations: int
+    tolerance: float
+    matrix: str = "Unknown"
+
+
+def benchmark_solver(
     solver_class: Type[BaseIterativeSolver], A: np.ndarray, b: np.ndarray, **kwargs
-) -> dict[str, Any]:
+) -> BenchmarkResult:
     """
     Esegue il benchmark di un solver: tempo di esecuzione, iterazioni, tolleranza.
 
@@ -31,10 +52,10 @@ def benchmark(
     solution = solver.solve(**kwargs)
     end = time.perf_counter()
 
-    return {
-        "solver_class": solver_class.__name__,
-        "solution": solution,
-        "execution_time": end - start,
-        "iterations": solver.get_iterations(),
-        "tolerance": kwargs.get("tol", 1e-10),
-    }
+    return BenchmarkResult(
+        solver_class=solver_class.__name__,
+        solution=solution,
+        execution_time=end - start,
+        iterations=solver.get_iterations(),
+        tolerance=solver.get_tolerance(),
+    )

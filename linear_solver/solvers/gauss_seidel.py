@@ -38,7 +38,9 @@ class GaussSeidelSolver(BaseIterativeSolver):
             r = self.b - self.A @ xnew
             xnew = xnew + lower_triangular.solve(L, r)
             self._iterations += 1
+            self._residuals.append(r)
 
+        self._solution = xnew
         return xnew
 
 

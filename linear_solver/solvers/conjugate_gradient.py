@@ -41,5 +41,7 @@ class ConjugateGradientSolver(BaseIterativeSolver):
             dold = dnew
 
             self._iterations += 1
+            self._residuals.append(rold)
 
+        self._solution = xnew
         return xnew
