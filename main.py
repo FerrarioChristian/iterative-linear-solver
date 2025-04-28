@@ -34,6 +34,8 @@ def main():
         if(siono):
             info = info_matrice(A)
             print(f"\n📄 Matrice: {matrix}", "|", "Condizionamento: ", info["condizionamento"], "|", "Simmetria: ", info["simmetria"], "|", "Positività: ", info["positività"], "|", "Dominanza: ", info["dominanza"], "|")
+        else:
+            print(f"\n📄 Matrice: {matrix} ", "--------------------------------------------------------------------------------------- |")
         for tol in TOLERANCES:
             print(f"\n### Tolleranza: {tol:.0e} ###")
             for solver_class in SOLVERS:

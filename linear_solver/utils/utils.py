@@ -19,6 +19,30 @@ def has_zero_in_diagonal(U: np.ndarray):
     return False
 
 
+def lower_triangular_solve_csc(A, b, unit_diagonal=False):
+    data = A.data
+    indices = A.indices
+    indptr = A.indptr
+    n = len(b)
+    y = np.zeros_like(b, dtype=float)
+    for j in range(n):
+            sum_ = 0.0
+            diag = None
+        
+            # Scorro gli elementi non nulli della colonna j
+            for idx in range(indptr[j], indptr[j+1]):
+                i = indices[idx]
+                val = data[idx]
+
+                if i < j and i !=0:
+                    sum_ += val * y[i]  # Contributo dai valori già calcolati
+                elif i == j:
+                    diag = val  # Trovo il valore diagonale
+
+            y[j] = (b[j] - sum_) / diag  # Risolvo per y[j]
+
+    return y
+    
 
 def info_matrice(A):
     # Assicurati che A sia CSR o CSC per usare la sparsità efficacemente
