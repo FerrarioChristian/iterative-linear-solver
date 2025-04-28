@@ -1,6 +1,5 @@
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.io import mmread
@@ -8,12 +7,17 @@ from scipy.io import mmread
 from cli import bcolors, parse_arguments
 from constants import MATRICES, SOLVERS, TOLERANCES
 from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
-from linear_solver.analysis.compare_plot import plot_execution_time
+from linear_solver.analysis.compare_plot import (
+    plot_execution_time,
+    plot_relative_error,
+    plot_sparsity,
+)
 from linear_solver.matrix_analysis.structure import analyze_matrix
 
 args = parse_arguments()
 max_iterations = args.max_iter
 skip_check = args.skip_check
+spy = args.spy
 
 
 def main():
@@ -43,6 +47,10 @@ def run_benchmark(matrices, solvers, tolerances, max_iterations):
 
     for matrix in matrices:
         A = load_matrix(matrix)
+
+        if spy:
+            plot_sparsity(A, matrix)
+
         n = A.shape[0]
         x = np.array([1] * n)
         b = A @ x
@@ -91,29 +99,8 @@ def print_results(df):
 
 
 def visualize_results(df, tolerances):
-    """Genera un grafico per ogni matrice, confrontando tutte le tolleranze."""
-    for matrix in df["matrix"].unique():
-        plt.figure(figsize=(10, 6))
-
-        for tol in tolerances:
-            subset = df[(df["matrix"] == matrix) & (df["tolerance"] == tol)]
-            if not subset.empty:
-                plt.plot(
-                    subset["solver_class"],
-                    subset["execution_time"],
-                    marker="o",
-                    linestyle="-",
-                    label=f"Tol={tol:.0e}",
-                )
-
-        plt.title(f"Execution Time Comparison for {matrix}")
-        plt.xlabel("Solver")
-        plt.ylabel("Execution Time (seconds)")
-        plt.grid()
-        plt.legend(title="Tolerances")
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plt.show()
+    plot_execution_time(df)
+    plot_relative_error(df)
 
 
 def print_intermediate_result(
