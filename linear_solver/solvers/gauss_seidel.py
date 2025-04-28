@@ -1,6 +1,6 @@
 from typing import Optional
 from scipy.sparse import tril
-from linear_solver.utils import lower_triangular_solve_csc
+from linear_solver.utils import lower_triangular_solve_csr
 from scipy.sparse.linalg import spsolve_triangular
 
 
@@ -30,14 +30,14 @@ class GaussSeidelSolver(BaseIterativeSolver):
         self._iterations = 0
 
         n = self.A.shape[0]
-        L = tril(self.A, format='csc')
+        L = tril(self.A, format='csr')
         xnew = np.array([0] * n)
         r = np.array([1] * n)
         bi = np.linalg.norm(self.b)
 
         while stopping_criterion(r, float(bi), self.tol, self._iterations, self.max_iter):
             r = self.b - self.A @ xnew
-            xnew = xnew +  lower_triangular_solve_csc(L, r)
+            xnew = xnew +  lower_triangular_solve_csr(L, r)
             self._iterations += 1
             self._residuals.append(r)
 
