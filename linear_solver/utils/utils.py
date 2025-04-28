@@ -28,7 +28,7 @@ def lower_triangular_solve_csc(A, b, unit_diagonal=False):
     for j in range(n):
             sum_ = 0.0
             diag = None
-        
+            print(indptr)
             # Scorro gli elementi non nulli della colonna j
             for idx in range(indptr[j], indptr[j+1]):
                 i = indices[idx]

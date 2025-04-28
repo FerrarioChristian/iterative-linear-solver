@@ -17,7 +17,9 @@ def main():
     maxIter = num_iterazioni()
     siono = chiedi_esame_proprieta()
     TOLERANCES = [1e-4, 1e-6, 1e-8, 1e-10]
+    
     SOLVERS = [JacobiSolver, GaussSeidelSolver, GradientSolver, ConjugateGradientSolver]
+    
     MATRICES = [
         "matrices/spa1.mtx",
         "matrices/spa2.mtx",
