@@ -46,10 +46,8 @@ def load_matrix(matrix_path):
 def run_benchmark(matrices, solvers, tolerances, max_iterations):
     """Esegue il benchmark per i solver e le matrici specificate."""
     all_results = []
-
     for matrix in matrices:
         A = load_matrix(matrix)
-
         n = A.shape[0]
         x = np.array([1] * n)
         b = A @ x

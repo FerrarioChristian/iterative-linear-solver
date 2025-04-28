@@ -37,7 +37,7 @@ class GaussSeidelSolver(BaseIterativeSolver):
 
         while stopping_criterion(r, float(bi), self.tol, self._iterations, self.max_iter):
             r = self.b - self.A @ xnew
-            xnew = xnew +  spsolve_triangular(L, r, lower=True)
+            xnew = xnew +  lower_triangular_solve_csc(L, r)
             self._iterations += 1
             self._residuals.append(r)
 
