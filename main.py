@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.io import mmread
@@ -7,11 +8,7 @@ from scipy.io import mmread
 from cli import bcolors, parse_arguments
 from constants import MATRICES, SOLVERS, TOLERANCES
 from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
-from linear_solver.analysis.compare_plot import (
-    plot_execution_time,
-    plot_relative_error,
-    plot_sparsity,
-)
+from linear_solver.analysis.compare_plot import plot_execution_time, plot_relative_error
 from linear_solver.matrix_analysis.structure import analyze_matrix
 
 args = parse_arguments()
@@ -21,6 +18,11 @@ spy = args.spy
 
 
 def main():
+
+    if spy:
+        spy_matrices()
+        return
+
     df = run_benchmark(
         MATRICES,
         SOLVERS,
@@ -30,7 +32,7 @@ def main():
 
     save_results(df)
     print_results(df)
-    visualize_results(df, TOLERANCES)
+    visualize_results(df)
 
 
 def load_matrix(matrix_path):
@@ -47,9 +49,6 @@ def run_benchmark(matrices, solvers, tolerances, max_iterations):
 
     for matrix in matrices:
         A = load_matrix(matrix)
-
-        if spy:
-            plot_sparsity(A, matrix)
 
         n = A.shape[0]
         x = np.array([1] * n)
@@ -98,7 +97,7 @@ def print_results(df):
         print(subset.to_string(index=False))
 
 
-def visualize_results(df, tolerances):
+def visualize_results(df):
     plot_execution_time(df)
     plot_relative_error(df)
 
@@ -138,6 +137,40 @@ def print_matrix_properties(path, A):
         print("\n".join(properties))
 
     print("======================================================" + bcolors.ENDC)
+
+
+def spy_matrices():
+    """Visualizza le matrici in formato sparso."""
+    _, axs = plt.subplots(2, 2)
+    axs = axs.flatten()
+
+    for i, matrix in enumerate(MATRICES):
+        try:
+            A = load_matrix(matrix)
+
+            nnz = np.count_nonzero(A)
+            total_elements = A.size
+
+            total_elements = A.shape[0] * A.shape[1]
+            sparsity_percentage = (nnz / total_elements) * 100
+
+            axs[i].spy(A)
+            axs[i].set_title(f"{Path(matrix).name}")
+            axs[i].set_xlabel(f"Density: {sparsity_percentage:.2f}%")
+
+        except FileNotFoundError:
+            axs[i].text(
+                0.5,
+                0.5,
+                f"File {Path(matrix).name} non trovato",
+                ha="center",
+                va="center",
+            )
+            axs[i].axis("off")
+            continue
+
+    plt.tight_layout()
+    plt.show()
 
 
 if __name__ == "__main__":
