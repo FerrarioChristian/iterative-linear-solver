@@ -1,16 +1,17 @@
 [project]
-name = "linear-solver"
+name = "iterative-linear-solver"
 version = "0.1.0"
-description = "Libreria per risolvere sistemi lineari con metodi iterativi"
+description = "A python library for solving linear systems using iterative methods. It includes Jacobi, Gauss-Seidel, Gradient, and Conjugate Gradient methods. The library aalso provides benchmarking and visualization utilities."
 readme = "README.md"
 authors = [
   { name = "Ferrario Christian", email = "c.ferrario30@campus.unimib.it" },
   { name = "Lanza Andrea", email = "a.lanza13@campus.unimib.it" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 
 classifiers = [
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -23,7 +24,6 @@ dependencies = [
   "numpy",
   "pandas",
   "scipy",
-  "seaborn",
 ]
 
 [tool.setuptools.packages.find]
