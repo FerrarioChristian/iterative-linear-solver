@@ -64,7 +64,8 @@ python main.py --max-iter 20000
 
 ### Options
 `--max-iter`: Set maximum iterations (default 20000)  
-`--skip-check`: Skip matrix property analysis
+`--skip-check`: Skip matrix property analysis  
+`--spy`: Generate a spy plot of the matrix  
 
 Results will be saved in restuls.csv and plots will be generated in the `plots` directory
 
