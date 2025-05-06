@@ -1,22 +1,25 @@
 import numpy as np
 
 
-def solve(L, b):
-    n = L.shape[0]
+def lower_triangular_solve(A, b):
+    data = A.data
+    indices = A.indices
+    indptr = A.indptr
+    n = len(b)
+    y = np.zeros_like(b, dtype=float)
 
-    x = np.zeros(n)
+    for j in range(n):
+        sum_ = 0.0
+        diag = None
+        for idx in range(indptr[j], indptr[j + 1]):
+            i = indices[idx]
+            val = data[idx]
 
-    x[0] = b[0] / L[0, 0]
+            if i < j and i != 0:
+                sum_ += val * y[i]
+            elif i == j:
+                diag = val
 
-    for i in range(1, n):
-        x[i] = (b[i] - L[i, :i] @ x[:i]) / L[i, i]
+        y[j] = (b[j] - sum_) / diag
 
-    return x
-
-
-def main():
-    return False
-
-
-if __name__ == "__main__":
-    main()
+    return y

@@ -1,6 +1,7 @@
 from typing import Optional
 
 import numpy as np
+from scipy.sparse import diags
 
 from linear_solver.convergence.criteria import (
     StoppingCriterion,
@@ -25,17 +26,18 @@ class JacobiSolver(BaseIterativeSolver):
         self._iterations = 0
 
         n = self.A.shape[0]
+        D = 1.0 / self.A.diagonal()
 
-        D = np.diag(np.diag(self.A))
-        D = np.linalg.inv(D)
         xnew = np.array([0] * n)
         xold = xnew + 1
         r = np.array([1] * n)
         bi = np.linalg.norm(self.b)
-        while stopping_criterion(r, float(bi), self.tol, self._iterations, self.max_iter):
+        while stopping_criterion(
+            r, float(bi), self.tol, self._iterations, self.max_iter
+        ):
             xold = xnew
             r = self.b - self.A @ xnew
-            xnew = xold + D @ r
+            xnew = xold + D * r
             self._iterations += 1
             self._residuals.append(r)
 
