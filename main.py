@@ -8,9 +8,26 @@ from scipy.sparse import csr_matrix
 from scipy.sparse import diags
 from linear_solver.utils import chiedi_esame_proprieta
 from linear_solver.utils import num_iterazioni
+import glob
+import argparse
 def main():
-
     
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--tolerances",
+        type=float,
+        nargs="+",
+        default=[1e-4, 1e-6, 1e-8, 1e-10],
+        help="Lista di tolleranze da usare"
+    )
+
+    args = parser.parse_args()
+    TOLERANCES = args.tolerances
+    print("Tolleranze scelte:")
+    for tol in TOLERANCES:
+        print(f"{tol:.0e}", end="")
+    print()
 
     all_results = []
 
@@ -20,12 +37,7 @@ def main():
     
     SOLVERS = [JacobiSolver, GaussSeidelSolver, GradientSolver, ConjugateGradientSolver]
     
-    MATRICES = [
-        "matrices/spa1.mtx",
-        "matrices/spa2.mtx",
-        "matrices/vem1.mtx",
-        "matrices/vem2.mtx",
-    ]
+    MATRICES = glob.glob("matrices/*.mtx")
 
     
     for matrix in MATRICES:
@@ -63,7 +75,7 @@ def print_result(result: dict, x_true: np.ndarray, maxIter):
     print(f"Iterazioni:     {result['iterations']}")
     if(result['iterations']==maxIter):
         print("errore: non converge")
-    print(f"Tempo (s):      {result['execution_time']:.6f}")
+    print(f"Tempo (s):      {result['execution_time']:.0e}")
 
 
 if __name__ == "__main__":

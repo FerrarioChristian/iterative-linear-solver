@@ -35,7 +35,7 @@ def lower_triangular_solve_csr(A, b, unit_diagonal=False):
                 val = data[idx]
 
                 if i < j:
-                    sum_ += val * y[i   ]  # Contributo dai valori già calcolati
+                    sum_ += val * y[i]  # Contributo dai valori già calcolati
                 elif i == j:
                     diag = val  # Trovo il valore diagonale
 
