@@ -10,12 +10,15 @@ from constants import MATRICES, SOLVERS, TOLERANCES
 from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
 from linear_solver.analysis.compare_plot import plot_execution_time, plot_relative_error
 from linear_solver.matrix_analysis.structure import analyze_matrix
-
 args = parse_arguments()
 max_iterations = args.max_iter
 skip_check = args.skip_check
 spy = args.spy
-
+TOLERANCES = args.tolerances
+print("Tolleranze scelte:")
+for tol in TOLERANCES:
+    print(f"{tol:.0e}", end="")
+print()
 
 def main():
 

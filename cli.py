@@ -13,6 +13,8 @@ def parse_arguments():
     parser.add_argument(
         "--spy", action="store_true", help="Enable sparse matrix visualization"
     )
+    parser.add_argument( "--tolerances", type=float, nargs="+", default=[1e-4, 1e-6, 1e-8, 1e-10], help="Lista di tolleranze da usare"
+    )
     return parser.parse_args()
 
 
