@@ -1,22 +1,31 @@
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.io import mmread
 
+from cli import bcolors, parse_arguments
 from constants import MATRICES, SOLVERS, TOLERANCES
 from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
-from linear_solver.analysis.compare_plot import plot_execution_time
+from linear_solver.analysis.compare_plot import plot_execution_time, plot_relative_error
 from linear_solver.matrix_analysis.structure import analyze_matrix
-
-from cli import parse_arguments, bcolors
-
-
-args = parse_arguments() 
+args = parse_arguments()
 max_iterations = args.max_iter
 skip_check = args.skip_check
+spy = args.spy
+TOLERANCES = args.tolerances
+print("Tolleranze scelte:")
+for tol in TOLERANCES:
+    print(f"{tol:.0e}", end="")
+print()
 
 def main():
+
+    if spy:
+        spy_matrices()
+        return
+
     df = run_benchmark(
         MATRICES,
         SOLVERS,
@@ -26,7 +35,8 @@ def main():
 
     save_results(df)
     print_results(df)
-    visualize_results(df, TOLERANCES) 
+    visualize_results(df)
+
 
 def load_matrix(matrix_path):
     """Carica una matrice da file e la converte in un array denso."""
@@ -35,10 +45,10 @@ def load_matrix(matrix_path):
         A = A.toarray()
     return A
 
+
 def run_benchmark(matrices, solvers, tolerances, max_iterations):
     """Esegue il benchmark per i solver e le matrici specificate."""
     all_results = []
-
     for matrix in matrices:
         A = load_matrix(matrix)
         n = A.shape[0]
@@ -60,9 +70,11 @@ def run_benchmark(matrices, solvers, tolerances, max_iterations):
 
     return pd.DataFrame(all_results)
 
-def save_results(df, csv_path="results.csv", json_path="results.json"):
-    """Salva i risultati in formato CSV e JSON."""
+
+def save_results(df, csv_path="results.csv"):
+    """Salva i risultati in formato CSV"""
     df.to_csv(csv_path, index=False)
+
 
 def print_results(df):
     """Stampa i risultati in modo leggibile."""
@@ -74,25 +86,29 @@ def print_results(df):
         subset.drop(columns=["matrix"], inplace=True)
         subset.sort_values(by=["tolerance", "solver_class"], inplace=True)
         subset = subset.drop(columns=["solution"])
-        subset["tolerance"] = subset["tolerance"].apply(lambda x: f"10e{int(np.log10(x) - 1)}")
-        columns_order = ["solver_class", "tolerance", "relative_error", "execution_time", "iterations"]
+        subset["tolerance"] = subset["tolerance"].apply(lambda x: f"{float(x):.0e}")
+        columns_order = [
+            "solver_class",
+            "tolerance",
+            "relative_error",
+            "execution_time",
+            "iterations",
+        ]
         subset = subset[columns_order]
         print(subset.to_string(index=False))
 
-def visualize_results(df, tolerances):
-    """Genera grafici comparativi per i risultati."""
-    for matrix in df["matrix"].unique():
-        for tol in tolerances:
-            subset = df[(df["matrix"] == matrix) & (df["tolerance"] == tol)]
-            if not subset.empty:
-                plot_execution_time(subset)
+
+def visualize_results(df):
+    plot_execution_time(df)
+    plot_relative_error(df)
+
 
 def print_intermediate_result(
     result: BenchmarkResult, x_true: np.ndarray, max_iterations: int
 ) -> None:
     x = result.solution
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
-    result.relative_error = err
+    result.relative_error = float(err)
 
     print(f"\n--- {result.solver_class} ---")
     print(f"Errore relativo: {err:.2e}")
@@ -122,6 +138,41 @@ def print_matrix_properties(path, A):
         print("\n".join(properties))
 
     print("======================================================" + bcolors.ENDC)
+
+
+def spy_matrices():
+    """Visualizza le matrici in formato sparso."""
+    _, axs = plt.subplots(2, 2)
+    axs = axs.flatten()
+
+    for i, matrix in enumerate(MATRICES):
+        try:
+            A = load_matrix(matrix)
+
+            nnz = np.count_nonzero(A)
+            total_elements = A.size
+
+            total_elements = A.shape[0] * A.shape[1]
+            sparsity_percentage = (nnz / total_elements) * 100
+
+            axs[i].spy(A)
+            axs[i].set_title(f"{Path(matrix).name}")
+            axs[i].set_xlabel(f"Density: {sparsity_percentage:.2f}%")
+
+        except FileNotFoundError:
+            axs[i].text(
+                0.5,
+                0.5,
+                f"File {Path(matrix).name} non trovato",
+                ha="center",
+                va="center",
+            )
+            axs[i].axis("off")
+            continue
+
+    plt.tight_layout()
+    plt.show()
+
 
 if __name__ == "__main__":
     main()

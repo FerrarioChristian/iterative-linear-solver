@@ -1,6 +1,3 @@
-### 3. `.gitignore`
-
-```text
 # Byte-compiled files
 __pycache__/
 *.py[cod]

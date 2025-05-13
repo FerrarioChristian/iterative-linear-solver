@@ -1,23 +1,85 @@
+from typing import Optional
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_execution_time(df):
-    plt.figure(figsize=(10, 6))
-    methods = df["solver_class"].unique()
-
+    """Genera un grafico per ogni matrice, confrontando tutte le tolleranze."""
     for matrix in df["matrix"].unique():
-        data = df[df["matrix"] == matrix]
-        plt.bar(
-            [f"{matrix}\n{method}" for method in data["solver_class"]],
-            data["execution_time"],
-            label=matrix,
-        )
+        plt.figure(figsize=(10, 6))
+        tolerances = df["tolerance"].unique()
 
-    plt.xlabel("Matrix and Solver")
-    plt.ylabel("Execution Time (s)")
-    plt.title("Execution Time Comparison")
-    plt.xticks(rotation=45, ha="right")
-    plt.grid(True)
+        for tol in tolerances:
+            subset = df[(df["matrix"] == matrix) & (df["tolerance"] == tol)]
+            if not subset.empty:
+                plt.plot(
+                    subset["solver_class"],
+                    subset["execution_time"],
+                    marker="o",
+                    linestyle="-",
+                    label=f"Tol={tol:.0e}",
+                )
+
+        plt.title(f"Execution Time Comparison for {matrix}")
+        plt.xlabel("Solver")
+        plt.ylabel("Execution Time (seconds)")
+        plt.grid()
+        plt.legend(title="Tolerances")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+
+def plot_relative_error(df):
+    """Genera un grafico per ogni matrice, confrontando tutte le tolleranze."""
+    for matrix in df["matrix"].unique():
+        plt.figure(figsize=(10, 6))
+        tolerances = df["tolerance"].unique()
+
+        for tol in tolerances:
+            subset = df[(df["matrix"] == matrix) & (df["tolerance"] == tol)]
+            if not subset.empty:
+                plt.plot(
+                    subset["solver_class"],
+                    subset["relative_error"],
+                    marker="o",
+                    linestyle="-",
+                    label=f"Tol={tol:.0e}",
+                )
+
+        plt.title(f"Relative Error Comparison for {matrix}")
+        plt.xlabel("Solver")
+        plt.ylabel("Relative Error")
+        plt.grid()
+        plt.legend(title="Tolerances")
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.show()
+
+
+def plot_sparsity(
+    A: np.ndarray, matrix_name: str, save_path: Optional[str] = None
+) -> None:
+    """
+    Plot the sparsity pattern of a matrix.
+
+    :param A: La matrice da visualizzare.
+    :param matrix_name: Nome della matrice per il titolo del grafico.
+    :param save_path: (Opzionale) Percorso per salvare l'immagine.
+    """
+    plt.figure(figsize=(8, 8))
+    plt.spy(A, markersize=1)
+    plt.title(f"Sparsity Pattern - {matrix_name}")
+    plt.xlabel("Colonne")
+    plt.ylabel("Righe")
+    plt.grid(False)
     plt.tight_layout()
-    plt.legend()
-    plt.show()
+
+    if save_path:
+        plt.savefig(save_path)
+        print(f"Sparsity plot saved to {save_path}")
+    else:
+        plt.show()
+
+    plt.close()

@@ -1,6 +1,7 @@
 # Linear Solver
 
 > A Python library for solving linear systems using iterative methods, analyzing matrix properties, benchmarking solvers, and visualizing performance.  The library is designed to solve large sparse linear systems efficiently, provided in sparse .mtx format.
+
 ---
 
 ## Features

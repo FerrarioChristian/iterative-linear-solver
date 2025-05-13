@@ -1,5 +1,6 @@
 import argparse
 
+
 def parse_arguments():
     """Parses command line arguments."""
     parser = argparse.ArgumentParser()
@@ -9,15 +10,22 @@ def parse_arguments():
     parser.add_argument(
         "--skip-check", action="store_true", help="Skip matrix properties check"
     )
+    parser.add_argument(
+        "--spy", action="store_true", help="Enable sparse matrix visualization"
+    )
+    parser.add_argument( "--tolerances", type=float, nargs="+", default=[1e-4, 1e-6, 1e-8, 1e-10], help="Lista di tolleranze da usare"
+    )
     return parser.parse_args()
 
+
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+    HEADER = "\033[95m"
+    OKBLUE = "\033[94m"
+    OKCYAN = "\033[96m"
+    OKGREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    ENDC = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+
