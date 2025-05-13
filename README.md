@@ -1,7 +1,6 @@
 # Linear Solver
 
-> A Python library for solving linear systems using iterative methods, analyzing matrix properties, benchmarking solvers, and visualizing performance.
-
+> A Python library for solving linear systems using iterative methods, analyzing matrix properties, benchmarking solvers, and visualizing performance.  The library is designed to solve large sparse linear systems efficiently, provided in sparse .mtx format.
 ---
 
 ## Features
@@ -24,7 +23,7 @@
 ## Installation
 
 ```bash
-pip install -e .
+pip install requirements.txt
 ```
 
 ## Usage
@@ -59,13 +58,14 @@ print(properties.is_symmetric, properties.is_positive_definite, properties.is_di
 ## Command line tool
 You can run the full benchmark from the command line:
 ```bash
-python main.py --max-iter 20000
+python main.py --max-iter 20000 --skip-check
 ```
 
 ### Options
 `--max-iter`: Set maximum iterations (default 20000)  
 `--skip-check`: Skip matrix property analysis  
 `--spy`: Generate a spy plot of the matrix  
+`--tolerances`: Set a list of tolerances (default [1e-4, 1e-6, 1e-8, 1e-10])  
 
 Results will be saved in restuls.csv and plots will be generated in the `plots` directory
 
@@ -74,22 +74,22 @@ Results will be saved in restuls.csv and plots will be generated in the `plots` 
 linear_solver/    
 │  
 ├── analysis/  
-│   ├── benchmark.py       # Benchmarking utilities  
-│   ├── compare_plot.py     # Plotting utilities  
+│   ├── benchmark.py            # Benchmarking utilities  
+│   ├── compare_plot.py         # Plotting utilities  
 │  
 ├── matrix_analysis/  
-│   ├── structure.py        # Matrix property analysis  
+│   ├── structure.py            # Matrix property analysis  
 │  
 ├── solvers/  
-│   ├── base.py             # Solver base class  
-│   ├── jacobi.py           # Jacobi method  
-│   ├── gauss_seidel.py     # Gauss-Seidel method  
-│   ├── gradient.py         # Gradient Descent method  
-│   ├── conjugate_gradient.py # Conjugate Gradient method  
+│   ├── base.py                 # Solver base class  
+│   ├── jacobi.py               # Jacobi method  
+│   ├── gauss_seidel.py         # Gauss-Seidel method  
+│   ├── gradient.py             # Gradient Descent method  
+│   ├── conjugate_gradient.py   # Conjugate Gradient method  
 │  
 ├── utils/  
-│   ├── stopping_criteria.py # Stopping conditions  
+│   ├── stopping_criteria.py    # Stopping conditions  
 │  
-main.py                     # CLI interface  
-constants.py                 # Solver settings (matrices, tolerances, etc.)
-```
+main.py                         # CLI interface  
+constants.py                    # Solver settings (matrices, tolerances, etc.)
+cli.py                          # Command line interface
