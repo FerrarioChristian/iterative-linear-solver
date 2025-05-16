@@ -1,10 +1,11 @@
+import os
 from typing import Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_execution_time(df):
+def plot_execution_time(df, save_path: Optional[str] = None):
     """Genera un grafico per ogni matrice, confrontando tutte le tolleranze."""
     for matrix in df["matrix"].unique():
         plt.figure(figsize=(10, 6))
@@ -28,10 +29,14 @@ def plot_execution_time(df):
         plt.legend(title="Tolerances")
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.show()
+        if save_path:
+            os.makedirs(save_path, exist_ok=True)
+            plt.savefig(f"{save_path}/execution_time_{matrix}.png")
+        else:
+            plt.show()
 
 
-def plot_relative_error(df):
+def plot_relative_error(df, save_path: Optional[str] = None):
     """Genera un grafico per ogni matrice, confrontando tutte le tolleranze."""
     for matrix in df["matrix"].unique():
         plt.figure(figsize=(10, 6))
@@ -55,7 +60,11 @@ def plot_relative_error(df):
         plt.legend(title="Tolerances")
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.show()
+        if save_path:
+            os.makedirs(save_path, exist_ok=True)
+            plt.savefig(f"{save_path}/relative_error_{matrix}.png")
+        else:
+            plt.show()
 
 
 def plot_sparsity(
@@ -77,8 +86,8 @@ def plot_sparsity(
     plt.tight_layout()
 
     if save_path:
+        os.makedirs(save_path, exist_ok=True)
         plt.savefig(save_path)
-        print(f"Sparsity plot saved to {save_path}")
     else:
         plt.show()
 

@@ -27,4 +27,7 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-include = [ "linear_solver", "linear_solver.*" ]
+include = [ "linear_solver", "linear_solver.*", "demo"]
+
+[project.scripts]
+linear-solver-demo = "demo.main:main"

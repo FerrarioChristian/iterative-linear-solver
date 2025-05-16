@@ -59,16 +59,18 @@ print(properties.is_symmetric, properties.is_positive_definite, properties.is_di
 ## Command line tool
 You can run the full benchmark from the command line:
 ```bash
-python main.py --max-iter 20000 --skip-check
+linear-solver-demo [-h] [-it MAX_ITER] [-sc] [--spy] [-t TOLERANCES ...]
+
 ```
 
 ### Options
-`--max-iter`: Set maximum iterations (default 20000)  
-`--skip-check`: Skip matrix property analysis  
-`--spy`: Generate a spy plot of the matrix  
-`--tolerances`: Set a list of tolerances (default [1e-4, 1e-6, 1e-8, 1e-10])  
+`-h, --help`: Show this help message and exit  
+`-it, --max-iter`: Set maximum iterations (default 20000)  
+`-sc, --skip-check`: Skip matrix property check  
+`--spy`: Generate a spy plot of the matrices  
+`-t, --tolerances`: Set a list of tolerances (default [1e-4, 1e-6, 1e-8, 1e-10])  
 
-Results will be saved in restuls.csv and plots will be generated in the `plots` directory
+Results will be saved in restuls.csv and plots will be generated in the `results/:plots` directory
 
 ## Project Structure
 ``````

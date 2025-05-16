@@ -5,15 +5,25 @@ def parse_arguments():
     """Parses command line arguments."""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--max-iter", type=int, default=20000, help="Maximum number of iterations"
+        "-it",
+        "--max-iter",
+        type=int,
+        default=20000,
+        help="Maximum number of iterations",
     )
     parser.add_argument(
-        "--skip-check", action="store_true", help="Skip matrix properties check"
+        "-sc", "--skip-check", action="store_true", help="Skip matrix properties check"
     )
     parser.add_argument(
         "--spy", action="store_true", help="Enable sparse matrix visualization"
     )
-    parser.add_argument( "--tolerances", type=float, nargs="+", default=[1e-4, 1e-6, 1e-8, 1e-10], help="Lista di tolleranze da usare"
+    parser.add_argument(
+        "-t",
+        "--tolerances",
+        type=float,
+        nargs="+",
+        default=[1e-4, 1e-6, 1e-8, 1e-10],
+        help="List of tolerances for the benchmark (eg: -t 1e-4 1e-6 1e-8)",
     )
     return parser.parse_args()
 
@@ -28,4 +38,3 @@ class bcolors:
     ENDC = "\033[0m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
-

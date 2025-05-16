@@ -5,20 +5,23 @@ import numpy as np
 import pandas as pd
 from scipy.io import mmread
 
-from cli import bcolors, parse_arguments
-from constants import MATRICES, SOLVERS, TOLERANCES
+from demo.cli import bcolors, parse_arguments
+from demo.constants import MATRICES, SOLVERS, TOLERANCES
 from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
 from linear_solver.analysis.compare_plot import plot_execution_time, plot_relative_error
 from linear_solver.matrix_analysis.structure import analyze_matrix
+
 args = parse_arguments()
 max_iterations = args.max_iter
 skip_check = args.skip_check
 spy = args.spy
 TOLERANCES = args.tolerances
+
 print("Tolleranze scelte:")
 for tol in TOLERANCES:
     print(f"{tol:.0e}", end="")
 print()
+
 
 def main():
 
@@ -71,7 +74,7 @@ def run_benchmark(matrices, solvers, tolerances, max_iterations):
     return pd.DataFrame(all_results)
 
 
-def save_results(df, csv_path="results.csv"):
+def save_results(df, csv_path="demo/results/results.csv"):
     """Salva i risultati in formato CSV"""
     df.to_csv(csv_path, index=False)
 
@@ -99,8 +102,8 @@ def print_results(df):
 
 
 def visualize_results(df):
-    plot_execution_time(df)
-    plot_relative_error(df)
+    plot_execution_time(df, "./demo/results/plots")
+    plot_relative_error(df, "./demo/results/plots")
 
 
 def print_intermediate_result(
