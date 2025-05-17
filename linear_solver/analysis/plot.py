@@ -1,3 +1,4 @@
+import os
 from collections.abc import Iterable
 from typing import List, Optional
 
@@ -5,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def spy_matrices(*matrices):
+def spy_matrices(*matrices, save_path: Optional[str] = None):
     """
     Visualize the matrices in sparse format.
     Accepts one or more matrix objects as arguments or a single iterable of matrices.
@@ -51,7 +52,12 @@ def spy_matrices(*matrices):
 
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.3)
-    plt.show()
+    if save_path:
+        save_path = os.path.join(save_path, "plots")
+        os.makedirs(save_path, exist_ok=True)
+        plt.savefig(f"{save_path}/spy.png")
+    else:
+        plt.show()
 
 
 def plot_convergence(

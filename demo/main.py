@@ -25,7 +25,7 @@ def main():
 
     if spy:
         to_plot = [load_matrix(matrix) for matrix in MATRICES]
-        spy_matrices(to_plot)
+        spy_matrices(to_plot, save_path=output_dir)
         return
 
     df = run_benchmark(
