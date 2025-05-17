@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -9,6 +10,7 @@ from demo.cli import bcolors, parse_arguments
 from demo.constants import MATRICES, SOLVERS, TOLERANCES
 from linear_solver.analysis.benchmark import BenchmarkResult, benchmark_solver
 from linear_solver.analysis.compare_plot import plot_execution_time, plot_relative_error
+from linear_solver.analysis.plot import spy_matrices
 from linear_solver.matrix_analysis.structure import analyze_matrix
 
 args = parse_arguments()
@@ -16,17 +18,14 @@ max_iterations = args.max_iter
 skip_check = args.skip_check
 spy = args.spy
 TOLERANCES = args.tolerances
-
-print("Tolleranze scelte:")
-for tol in TOLERANCES:
-    print(f"{tol:.0e}", end="")
-print()
+output_dir = args.output_dir
 
 
 def main():
 
     if spy:
-        spy_matrices()
+        to_plot = [load_matrix(matrix) for matrix in MATRICES]
+        spy_matrices(to_plot, save_path=output_dir)
         return
 
     df = run_benchmark(
@@ -36,7 +35,7 @@ def main():
         max_iterations,
     )
 
-    save_results(df)
+    save_results(df, output_dir)
     print_results(df)
     visualize_results(df)
 
@@ -74,16 +73,28 @@ def run_benchmark(matrices, solvers, tolerances, max_iterations):
     return pd.DataFrame(all_results)
 
 
-def save_results(df, csv_path="demo/results/results.csv"):
+def save_results(df, save_path=None):
     """Salva i risultati in formato CSV"""
-    df.to_csv(csv_path, index=False)
+    if save_path:
+        os.makedirs(save_path, exist_ok=True)
+        df.to_csv(os.path.join(save_path, "results.csv"), index=False)
 
 
 def print_results(df):
     """Stampa i risultati in modo leggibile."""
-    print("\n--- Risultati per Matrice ---")
+    print(
+        bcolors.HEADER
+        + "\n-----------------------------------------------------------------------------"
+    )
+    print(
+        "----------------------------- Risultati Finali ------------------------------"
+    )
+    print(
+        "-----------------------------------------------------------------------------"
+        + bcolors.ENDC
+    )
     for matrix in df["matrix"].unique():
-        print(f"\nMatrice: {matrix}")
+        print(f"\nMatrice: {bcolors.BOLD}{bcolors.WARNING}{matrix}{bcolors.ENDC}")
         # Filtra i risultati per la matrice corrente
         subset = df[df["matrix"] == matrix].copy()
         subset.drop(columns=["matrix"], inplace=True)
@@ -102,8 +113,8 @@ def print_results(df):
 
 
 def visualize_results(df):
-    plot_execution_time(df, "./demo/results/plots")
-    plot_relative_error(df, "./demo/results/plots")
+    plot_execution_time(df, output_dir)
+    plot_relative_error(df, output_dir)
 
 
 def print_intermediate_result(
@@ -141,40 +152,6 @@ def print_matrix_properties(path, A):
         print("\n".join(properties))
 
     print("======================================================" + bcolors.ENDC)
-
-
-def spy_matrices():
-    """Visualizza le matrici in formato sparso."""
-    _, axs = plt.subplots(2, 2)
-    axs = axs.flatten()
-
-    for i, matrix in enumerate(MATRICES):
-        try:
-            A = load_matrix(matrix)
-
-            nnz = np.count_nonzero(A)
-            total_elements = A.size
-
-            total_elements = A.shape[0] * A.shape[1]
-            sparsity_percentage = (nnz / total_elements) * 100
-
-            axs[i].spy(A)
-            axs[i].set_title(f"{Path(matrix).name}")
-            axs[i].set_xlabel(f"Density: {sparsity_percentage:.2f}%")
-
-        except FileNotFoundError:
-            axs[i].text(
-                0.5,
-                0.5,
-                f"File {Path(matrix).name} non trovato",
-                ha="center",
-                va="center",
-            )
-            axs[i].axis("off")
-            continue
-
-    plt.tight_layout()
-    plt.show()
 
 
 if __name__ == "__main__":
