@@ -30,6 +30,7 @@ def plot_execution_time(df, save_path: Optional[str] = None):
         plt.xticks(rotation=45)
         plt.tight_layout()
         if save_path:
+            save_path = os.path.join(save_path, "plots")
             os.makedirs(save_path, exist_ok=True)
             plt.savefig(f"{save_path}/execution_time_{matrix}.png")
         else:
@@ -61,6 +62,7 @@ def plot_relative_error(df, save_path: Optional[str] = None):
         plt.xticks(rotation=45)
         plt.tight_layout()
         if save_path:
+            save_path = os.path.join(save_path, "plots")
             os.makedirs(save_path, exist_ok=True)
             plt.savefig(f"{save_path}/relative_error_{matrix}.png")
         else:

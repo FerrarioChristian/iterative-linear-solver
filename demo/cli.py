@@ -25,6 +25,14 @@ def parse_arguments():
         default=[1e-4, 1e-6, 1e-8, 1e-10],
         help="List of tolerances for the benchmark (eg: -t 1e-4 1e-6 1e-8)",
     )
+    parser.add_argument(
+        "-o",
+        "--output-dir",
+        nargs="?",
+        const="demo/results",
+        type=str,
+        help="Directory to save the results. If omitted, the plot is shown. If specified without a path, demo/results/plots is used.",
+    )
     return parser.parse_args()
 
 
