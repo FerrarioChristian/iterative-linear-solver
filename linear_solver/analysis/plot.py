@@ -9,7 +9,8 @@ import numpy as np
 def spy_matrices(*matrices, save_path: Optional[str] = None):
     """
     Visualize the matrices in sparse format.
-    Accepts one or more matrix objects as arguments or a single iterable of matrices.
+    :param matrices: Matrices to visualize. If a single iterable is provided, it will be unpacked.
+    :param save_path: Path to save the plot. If None, the plot will be shown.
     """
     if len(matrices) == 1 and isinstance(matrices[0], Iterable):
         matrices_to_plot = list(matrices[0])
@@ -22,7 +23,7 @@ def spy_matrices(*matrices, save_path: Optional[str] = None):
         return
 
     if num_matrices == 1:
-        fig, ax = plt.subplots(1, 1)
+        _, ax = plt.subplots(1, 1)
         axs = [ax]  # Crea una lista contenente il singolo oggetto Axes
     else:
         cols = (num_matrices + 1) // 2

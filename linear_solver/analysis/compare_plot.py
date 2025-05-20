@@ -6,7 +6,12 @@ import numpy as np
 
 
 def plot_execution_time(df, save_path: Optional[str] = None):
-    """Genera un grafico per ogni matrice, confrontando tutte le tolleranze."""
+    """
+    Plot the execution time for each solver and tolerance.
+    Args:
+        df (pd.DataFrame): DataFrame containing the benchmark results.
+        save_path (str, optional): Path to save the plots. If None, the plots will be shown.
+    """
     for matrix in df["matrix"].unique():
         plt.figure(figsize=(10, 6))
         tolerances = df["tolerance"].unique()
@@ -38,7 +43,12 @@ def plot_execution_time(df, save_path: Optional[str] = None):
 
 
 def plot_relative_error(df, save_path: Optional[str] = None):
-    """Genera un grafico per ogni matrice, confrontando tutte le tolleranze."""
+    """
+    Plot the relative error for each solver and tolerance.
+    Args:
+        df (pd.DataFrame): DataFrame containing the benchmark results.
+        save_path (str, optional): Path to save the plots. If None, the plots will be shown.
+    """
     for matrix in df["matrix"].unique():
         plt.figure(figsize=(10, 6))
         tolerances = df["tolerance"].unique()
@@ -74,10 +84,10 @@ def plot_sparsity(
 ) -> None:
     """
     Plot the sparsity pattern of a matrix.
-
-    :param A: La matrice da visualizzare.
-    :param matrix_name: Nome della matrice per il titolo del grafico.
-    :param save_path: (Opzionale) Percorso per salvare l'immagine.
+    Args:
+        A (np.ndarray): The matrix to visualize.
+        matrix_name (str): Name of the matrix for the title.
+        save_path (str, optional): Path to save the plot. If None, the plot will be shown.
     """
     plt.figure(figsize=(8, 8))
     plt.spy(A, markersize=1)

@@ -37,6 +37,8 @@ def parse_arguments():
 
 
 class bcolors:
+    """Class for colored terminal output."""
+
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
     OKCYAN = "\033[96m"

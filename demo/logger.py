@@ -9,7 +9,11 @@ from linear_solver.matrix_analysis.structure import analyze_matrix
 
 
 def print_results(df):
-    """Stampa i risultati in modo leggibile."""
+    """
+    Print the final results of the benchmark in a readable table format.
+    Args:
+        df (pd.DataFrame): DataFrame containing the benchmark results.
+    """
     print(
         bcolors.HEADER
         + "\n-----------------------------------------------------------------------------"
@@ -23,7 +27,6 @@ def print_results(df):
     )
     for matrix in df["matrix"].unique():
         print(f"\nMatrice: {bcolors.BOLD}{bcolors.WARNING}{matrix}{bcolors.ENDC}")
-        # Filtra i risultati per la matrice corrente
         subset = df[df["matrix"] == matrix].copy()
         subset.drop(columns=["matrix"], inplace=True)
         subset.sort_values(by=["tolerance", "solver_class"], inplace=True)
@@ -43,6 +46,13 @@ def print_results(df):
 def print_intermediate_result(
     result: BenchmarkResult, x_true: np.ndarray, max_iterations: int
 ) -> None:
+    """
+    Print the intermediate solve results of the benchmark.
+    Args:
+        result (BenchmarkResult): The result of the benchmark.
+        x_true (np.ndarray): The true solution vector.
+        max_iterations (int): Maximum number of iterations for the solver.
+    """
     x = result.solution
     err = np.linalg.norm(x - x_true) / np.linalg.norm(x_true)
     result.relative_error = float(err)
@@ -57,7 +67,13 @@ def print_intermediate_result(
 
 
 def print_matrix_properties(path, A, skip_check):
-    """Stampa le proprietà della matrice in modo leggibile."""
+    """
+    Prints the properties of the matrix.
+    Args:
+        path (str): Path to the matrix file.
+        A (np.ndarray): The matrix to analyze.
+        skip_check (bool): Whether to skip the matrix properties check.
+    """
     print(bcolors.HEADER + "\n======================================================")
     print(f"Matrice: {path}")
 
@@ -78,12 +94,23 @@ def print_matrix_properties(path, A, skip_check):
 
 
 def visualize_results(df, output_dir):
+    """
+    Visualizes the benchmark results by plotting execution time and relative error.
+    Args:
+        df (pd.DataFrame): DataFrame containing the benchmark results.
+        output_dir (str): Directory to save the plots.
+    """
     plot_execution_time(df, output_dir)
     plot_relative_error(df, output_dir)
 
 
 def save_results(df, save_path=None):
-    """Salva i risultati in formato CSV"""
+    """
+    Save the benchmark results to a CSV file.
+    Args:
+        df (pd.DataFrame): DataFrame containing the benchmark results.
+        save_path (str): Directory to save the results. If None, no file is saved.
+    """
     if save_path:
         os.makedirs(save_path, exist_ok=True)
         df.to_csv(os.path.join(save_path, "results.csv"), index=False)

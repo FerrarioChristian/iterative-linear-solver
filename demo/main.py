@@ -44,7 +44,7 @@ def main():
 
 
 def load_matrix(matrix_path):
-    """Carica una matrice da file e la converte in un array denso."""
+    """Loads a matrix from a file and converts it to a dense array."""
     A = mmread(matrix_path)
     if not isinstance(A, np.ndarray):
         A = A.toarray()
@@ -52,7 +52,17 @@ def load_matrix(matrix_path):
 
 
 def run_benchmark(matrices, solvers, tolerances, max_iterations):
-    """Esegue il benchmark per i solver e le matrici specificate."""
+    """
+    Execute the benchmark for the specified matrices, solvers, tolerances and iterations.
+    Args:
+        matrices (list): List of matrix file paths.
+        solvers (list): List of solver classes.
+        tolerances (list): List of tolerances for the benchmark.
+        max_iterations (int): Maximum number of iterations for the solvers.
+    Returns:
+        pd.DataFrame: DataFrame containing the benchmark results.
+    """
+
     all_results = []
     for matrix in matrices:
         A = load_matrix(matrix)
