@@ -24,10 +24,36 @@
 ## Installation
 
 ```bash
-pip install requirements.txt
+# Clone the project
+git clone git@github.com:FerrarioChristian/iterative-linear-solver.git
+cd iterative-linear-solver
+
+# Create the virtual environment
+python3 -m venv .venv
+
+# Install the dependencies
+pip install -e .
+
 ```
 
 ## Usage
+You can run the full benchmark from the command line:
+```bash
+linear-solver-demo [-h] [-it MAX_ITER] [-sc] [--spy] [-t TOLERANCES ...]
+
+```
+
+### Options
+`-h, --help`: Show this help message and exit  
+`-it, --max-iter`: Set maximum iterations (default 20000)  
+`-sc, --skip-check`: Skip matrix property check  
+`--spy`: Generate a spy plot of the matrices  
+`-t, --tolerances`: Set a list of tolerances (default [1e-4, 1e-6, 1e-8, 1e-10])  
+
+Results will be saved in restuls.csv and plots will be generated in the `results/:plots` directory
+
+## Library functions
+
 ### Solving a system
 You can use any solver directly:
 ```python
@@ -56,43 +82,34 @@ properties = analyze_matrix(A)
 print(properties.is_symmetric, properties.is_positive_definite, properties.is_diagonally_dominant)
 ```
 
-## Command line tool
-You can run the full benchmark from the command line:
-```bash
-linear-solver-demo [-h] [-it MAX_ITER] [-sc] [--spy] [-t TOLERANCES ...]
-
-```
-
-### Options
-`-h, --help`: Show this help message and exit  
-`-it, --max-iter`: Set maximum iterations (default 20000)  
-`-sc, --skip-check`: Skip matrix property check  
-`--spy`: Generate a spy plot of the matrices  
-`-t, --tolerances`: Set a list of tolerances (default [1e-4, 1e-6, 1e-8, 1e-10])  
-
-Results will be saved in restuls.csv and plots will be generated in the `results/:plots` directory
 
 ## Project Structure
 ``````
-linear_solver/    
-│  
-├── analysis/  
-│   ├── benchmark.py            # Benchmarking utilities  
-│   ├── compare_plot.py         # Plotting utilities  
-│  
-├── matrix_analysis/  
-│   ├── structure.py            # Matrix property analysis  
-│  
-├── solvers/  
-│   ├── base.py                 # Solver base class  
-│   ├── jacobi.py               # Jacobi method  
-│   ├── gauss_seidel.py         # Gauss-Seidel method  
-│   ├── gradient.py             # Gradient Descent method  
-│   ├── conjugate_gradient.py   # Conjugate Gradient method  
-│  
-├── utils/  
-│   ├── stopping_criteria.py    # Stopping conditions  
-│  
-main.py                         # CLI interface  
-constants.py                    # Solver settings (matrices, tolerances, etc.)
-cli.py                          # Command line interface
+linear-iterative-solver
+├── demo
+│   ├── cli.py                       # Parameters options
+│   ├── constants.py                 # Solver settings (matrices, tolerances, etc.)
+│   ├── logger.py                    # Funtions to print the status of the comutation
+│   └── main.py                      # CLI interface
+├── linear_solver
+│   ├── analysis
+│   │   ├── benchmark.py             # Benchmarking utilities  
+│   │   ├── compare_plot.py          # Plotting utilities
+│   │   └── plot.py
+│   ├── convergence
+│   │   └── criteria.py              # Stopping conditions  
+│   ├── matrix_analysis
+│   │   └── structure.py             # Matrix property analysis
+│   └── solvers
+│       ├── base_solver.py
+│       ├── conjugate_gradient.py
+│       ├── gauss_seidel.py
+│       ├── gradient.py
+│       ├── jacobi.py
+│       └── lower_triangular.py
+├── matrices
+│   ├── spa1.mtx
+│   ├── spa2.mtx
+│   ├── vem1.mtx
+│   └── vem2.mtx
+└── pyproject.toml
