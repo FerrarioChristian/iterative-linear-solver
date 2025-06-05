@@ -3,10 +3,8 @@ from typing import Optional
 import numpy as np
 from scipy.sparse import diags
 
-from linear_solver.convergence.criteria import (
-    StoppingCriterion,
-    default_stopping_criterion,
-)
+from linear_solver.convergence.criteria import (StoppingCriterion,
+                                                default_stopping_criterion)
 
 from .base_solver import BaseIterativeSolver
 
@@ -14,12 +12,28 @@ from .base_solver import BaseIterativeSolver
 
 
 class JacobiSolver(BaseIterativeSolver):
+    """
+    Jacobi iterative solver for linear systems of equations.
+    This class implements the Jacobi method for solving the system of equations Ax = b,
+    where A is a square matrix and b is a vector.
+    """
+
     def solve(
         self,
         tol: Optional[float] = None,
         max_iter: Optional[int] = None,
         stopping_criterion: StoppingCriterion = default_stopping_criterion,
     ) -> np.ndarray:
+        """
+        Solve the linear system Ax = b using the Jacobi method.
+        Args:
+            tol (float, optional): Tolerance for convergence. Default is 1e-10.
+            max_iter (int, optional): Maximum number of iterations. Default is 1000.
+            stopping_criterion (function, optional): Stopping criterion function.
+                Default is default_stopping_criterion.
+        Returns:
+            np.ndarray: Solution vector x.
+        """
 
         self.tol = tol if tol is not None else self.tol
         self.max_iter = max_iter if max_iter is not None else self.max_iter

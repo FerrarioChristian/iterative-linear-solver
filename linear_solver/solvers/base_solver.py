@@ -12,10 +12,16 @@ from linear_solver.convergence.criteria import (
 class BaseIterativeSolver(ABC):
     """
     Abstract base class for linear solvers.
+    This class provides a common interface for all iterative solvers.
+    It defines the basic structure and methods that all solvers must implement.
+    :param A: Coefficient matrix.
+    :param b: Right-hand side vector.
+    :param tol: Tolerance for convergence.
+    :param max_iter: Maximum number of iterations.
     """
 
     def __init__(
-        self, A: np.ndarray, b: np.ndarray, tol: float = 1e-10, max_iter: int = 1000
+        self, A: np.ndarray, b: np.ndarray, tol: float = 1e-10, max_iter: int = 20000
     ):
         self.A = A
         self.b = b
@@ -36,6 +42,7 @@ class BaseIterativeSolver(ABC):
         Solve the linear system Ax = b.
         :param tol: Tolerance for convergence.
         :param max_iter: Maximum number of iterations.
+        :param stopping_criterion: Stopping criterion function.
         :return: Solution vector x.
         """
         NotImplementedError("You must implement the solve method.")

@@ -28,7 +28,8 @@ def main():
 
     if spy:
         to_plot = [load_matrix(matrix) for matrix in MATRICES]
-        spy_matrices(to_plot, save_path=output_dir)
+        matrix_names = [Path(matrix).name for matrix in MATRICES]
+        spy_matrices(to_plot, save_path=output_dir, matrix_names=matrix_names)
         return
 
     df = run_benchmark(
@@ -50,7 +51,17 @@ def load_matrix(matrix_path):
 
 
 def run_benchmark(matrices, solvers, tolerances, max_iterations):
-    """Esegue il benchmark per i solver e le matrici specificate."""
+    """
+    Execute the benchmark for the specified matrices, solvers, tolerances and iterations.
+    Args:
+        matrices (list): List of matrix file paths.
+        solvers (list): List of solver classes.
+        tolerances (list): List of tolerances for the benchmark.
+        max_iterations (int): Maximum number of iterations for the solvers.
+    Returns:
+        pd.DataFrame: DataFrame containing the benchmark results.
+    """
+
     all_results = []
     for matrix in matrices:
         A = load_matrix(matrix)

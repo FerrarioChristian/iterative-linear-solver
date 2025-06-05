@@ -2,6 +2,14 @@ import numpy as np
 
 
 def lower_triangular_solve(A, b):
+    """
+    Solve the system Ax = b where A is a lower triangular matrix.
+    Args:
+        A (scipy.sparse.csr_matrix): Lower triangular matrix in CSR format.
+        b (np.ndarray): Right-hand side vector.
+        Returns:
+        np.ndarray: Solution vector x.
+    """
     data = A.data
     indices = A.indices
     indptr = A.indptr
