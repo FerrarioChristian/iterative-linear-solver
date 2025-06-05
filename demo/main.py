@@ -45,10 +45,8 @@ def main():
 
 
 def load_matrix(matrix_path):
-    """Loads a matrix from a file and converts it to a dense array."""
-    A = mmread(matrix_path)
-    if not isinstance(A, np.ndarray):
-        A = A.toarray()
+    """Carica una matrice da file e la converte in un array denso."""
+    A = mmread(matrix_path).tocsr()
     return A
 
 
