@@ -1,0 +1,30 @@
+\section{Sintesi e confronto dei metodi iterativi}
+
+Dai risultati ottenuti su matrici di diversa struttura e dimensione, possiamo trarre alcune osservazioni generali sul comportamento dei metodi iterativi testati.
+
+\begin{itemize}
+    \item \textbf{Conjugate Gradient (CG)}: si è dimostrato il metodo più efficiente nella maggior parte dei casi. Ha sempre richiesto il minor numero di iterazioni e il tempo di esecuzione più basso, pur garantendo un errore relativo contenuto anche con tolleranze molto strette. È particolarmente adatto per matrici simmetriche definite positive.
+
+    \item \textbf{Gauss-Seidel}: ha mostrato una buona capacità di ridurre l'errore con poche iterazioni, ma i tempi di esecuzione sono risultati generalmente elevati, a causa del maggior costo computazionale per iterazione. In alcuni casi è risultato meno scalabile rispetto agli altri metodi.
+
+    \item \textbf{Gradient Descent}: ha richiesto un numero di iterazioni molto elevato e tempi significativamente più lunghi, rendendolo il metodo meno efficiente del gruppo, specialmente per matrici di grandi dimensioni. Tuttavia, ha mostrato un comportamento stabile in termini di errore.
+
+    \item \textbf{Jacobi}: ha presentato tempi di esecuzione contenuti, ma ha richiesto un numero di iterazioni medio-alto. Ha offerto una buona alternativa a Gauss-Seidel in termini di parallelizzabilità, pur con performance inferiori rispetto al metodo CG.
+\end{itemize}
+
+In generale, il metodo del \textbf{Gradiente Coniugato} rappresenta la scelta migliore in termini di efficienza e precisione per le matrici trattate. I metodi classici come \textbf{Jacobi} e \textbf{Gauss-Seidel} restano utili per casi didattici o in contesti in cui la semplicità implementativa è un fattore rilevante, mentre il \textbf{Gradiente semplice} è da evitare nei problemi su larga scala per la sua lentezza.
+
+
+\section{Considerazioni finali}
+
+I risultati ottenuti confermano le aspettative teoriche. \\
+
+In termini di precisione, il comportamento dei metodi analizzati risente in modo significativo delle caratteristiche delle matrici utilizzate, in particolare del numero di condizionamento e della dimensione. \\
+
+Per la matrice \textbf{spa1}, il metodo del gradiente semplice risulta il meno preciso, mentre gli altri tre metodi (Jacobi, Gauss-Seidel e gradiente coniugato) mostrano prestazioni simili. Questo è coerente con il fatto che il gradiente classico tende ad accumulare errori in presenza di matrici con condizionamento elevato (in questo caso $\approx 2000$), riducendo la qualità dell'approssimazione anche se la matrice è simmetrica definita positiva (SPD).\\
+
+Nel caso della matrice \textbf{spa2}, si osserva nuovamente un \textbf{comportamento meno preciso} del gradiente semplice, mentre Jacobi e Gauss-Seidel raggiungono risultati migliori. Questo può essere attribuito sia al condizionamento elevato ($\approx 1400$), sia alla dimensione molto ampia della matrice, che contribuisce ad aumentare la sensibilità numerica del gradiente. Al contrario, Jacobi e Gauss-Seidel, pur essendo metodi semplici, riescono in alcuni casi a produrre risultati più stabili quando la struttura della matrice favorisce una rapida riduzione dell’errore nei primi passi iterativi. \\
+
+Diverso è il caso delle matrici \textbf{vem1} e \textbf{vem2}, caratterizzate da un \textbf{condizionamento più contenuto} ($\approx 350$--$500$) e \textbf{dimensioni minori}. In questi casi, il metodo del gradiente coniugato mostra chiaramente le prestazioni migliori in termini di precisione, come previsto dalla teoria. Infatti, essendo progettato specificamente per matrici \textit{SPD}, il gradiente coniugato sfrutta al meglio la struttura del problema, riuscendo a minimizzare l’errore in poche iterazioni e con alta stabilità numerica. Gli altri tre metodi si comportano in modo simile tra loro, ma senza raggiungere lo stesso livello di accuratezza.\\
+
+In sintesi, il gradiente coniugato si conferma il metodo più preciso quando la matrice è ben condizionata, mentre il gradiente semplice mostra maggiori difficoltà su problemi mal condizionati o molto grandi. Jacobi e Gauss-Seidel, nonostante la loro semplicità, possono ottenere buoni risultati in contesti specifici, soprattutto quando il numero di iterazioni è limitato e l’errore non si accumula eccessivamente. \\

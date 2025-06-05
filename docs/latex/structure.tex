@@ -1,0 +1,83 @@
+\section{Struttura della progetto}
+L’implementazione del progetto è stata organizzata in modo modulare, seguendo una separazione tra la \textbf{libreria} sviluppata e il \textbf{programma eseguibile} che ne fa uso. Di seguito si descrivono le principali componenti.
+
+\begin{footnotesize}
+\begin{verbatim}
+linear-iterative-solver
+├── demo
+│   ├── __init__.py
+│   ├── cli.py
+│   ├── constants.py
+│   ├── logger.py
+│   └── main.py
+├── linear_solver
+│   ├── analysis
+│   │   ├── benchmark.py
+│   │   ├── compare_plot.py
+│   │   └── plot.py
+│   ├── convergence
+│   │   └── criteria.py
+│   ├── matrix_analysis
+│   │   ├── __init__.py
+│   │   └── structure.py
+│   └── solvers
+│       ├── __init__.py
+│       ├── base_solver.py
+│       ├── conjugate_gradient.py
+│       ├── gauss_seidel.py
+│       ├── gradient.py
+│       ├── jacobi.py
+│       └── lower_triangular.py
+├── matrices
+│   ├── spa1.mtx
+│   ├── spa2.mtx
+│   ├── vem1.mtx
+│   └── vem2.mtx
+├── pyproject.toml
+└── requirements.txt
+\end{verbatim}
+\end{footnotesize}
+
+\subsection{Panoramica generale}
+
+La root della repository contiene tre directory principali:
+
+\begin{itemize}
+    \item \texttt{linear\_solver/}: libreria contenente l’implementazione dei metodi iterativi e delle funzioni di supporto
+    \item \texttt{demo/}: script eseguibile e per il confronto sperimentale dei metodi
+    \item \texttt{matrices/}: file \texttt{.mtx} contenenti le matrici sparse fornite per i test
+\end{itemize}
+
+Completano il progetto i file \texttt{pyproject.toml} e \texttt{requirements.txt}, che definiscono le dipendenze del progetto e script di esecuuzione.
+
+\subsection{Libreria \texttt{linear\_solver/}}
+
+La libreria è suddivisa in diversi moduli:
+
+\begin{itemize}
+    \item \texttt{solvers/}: contiene l’implementazione dei quattro metodi iterativi richiesti (\texttt{jacobi.py}, \texttt{gauss\_seidel.py}, \texttt{gradient.py}, \texttt{conjugate\_gradient.py}) oltre a \texttt{lower\_triangular.py}, necessario per il metodo di Gauss-Seidel. Tutti i metodi derivano da una \textbf{classe astratta} comune definita in \texttt{base\_solver.py}, che stabilisce l’\textit{interfaccia standard} da implementare
+    
+    \item \texttt{convergence/criteria.py}: contiene i \textbf{criteri di arresto} utilizzati nei metodi iterativi, per il momento è implemetata esclusivamente la verifica sulla norma del residuo, ma l'utente può definire differenti criteri d'arresto, e passarli al metodo risolutivo durante la costruzione dell'oggetto
+
+    \item \texttt{analysis/}: modulo dedicato alla \textbf{valutazione sperimentale}, con funzioni per la generazione  di grafici e un file \texttt{benchmark.py} per la misurazione delle prestazioni dei metodi, in particolare del tempo di computazione, il numero di iterazioni e la soluzione finale, per poi calcolarne l'errore
+
+    \item \texttt{matrix\_analysis}: contiene funzioni utili per \textbf{verificare le proprietà delle matrici}, come la simmetria e la definitezza positiva
+\end{itemize}
+
+\subsection{Programma eseguibile \texttt{demo/}}
+
+La directory \texttt{demo/} contiene gli script per eseguire la libreria sui dati di test:
+
+\begin{itemize}
+    \item \texttt{main.py}: script principale che carica le matrici sparse dalla directory \texttt{matrices/}, genera il vettore \( x = \mathbf{1} \), calcola \( b = Ax \) e applica i quattro metodi iterativi per ciascun valore di tolleranza specificato;
+    
+    \item \texttt{cli.py}: interfaccia a riga di comando per la configurazione dei parametri;
+    
+    \item \texttt{logger.py} e \texttt{constants.py}: gestione dell’output e configurazioni globali.
+\end{itemize}
+
+
+
+\subsection{Considerazioni}
+
+La struttura modulare del progetto garantisce una \textbf{buona separazione delle responsabilità}, facilita l’estensione (es. aggiunta di nuovi metodi) e favorisce la riusabilità della libreria in altri contesti. L’uso di un’architettura orientata agli oggetti per i solver migliora inoltre la leggibilità e la manutenibilità del codice.

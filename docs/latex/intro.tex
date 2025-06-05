@@ -1,0 +1,99 @@
+\section{Introduzione}
+
+\subsection{Contesto teorico}
+La risoluzione di sistemi lineari \(Ax = b\) è un tema centrale nel calcolo scientifico. Sebbene esistano metodi \textbf{diretti} (come eliminazione di Gauss o fattorizzazione LU) che portano alla soluzione esatta in aritmetica reale, queste tecniche presentano alcune limitazioni, soprattutto in presenza di matrici mal condizionate o di grandi dimensioni, dove il fenomeno del \textit{fill-in} può compromettere l’efficienza computazionale.
+
+Per problemi su larga scala, si ricorre spesso a \textbf{metodi iterativi}, che costruiscono una successione di soluzioni approssimate convergenti alla soluzione esatta. Rispetto ai metodi diretti, essi offrono una maggiore flessibilità in termini di memoria e possono sfruttare la struttura sparsa della matrice, riducendo sensibilmente i costi computazionali.\\
+
+I metodi iterativi si suddividono principalmente in due categorie:
+\begin{itemize}
+    \item \textbf{Stazionari}, come Jacobi e Gauss-Seidel: semplici da implementare, ma sensibili al condizionamento della matrice;
+    \item \textbf{Non stazionari}, come Metodo del Gradiente e Gradiente Coniugato: più complessi, ma generalmente più rapidi ed efficaci, in particolare quando la matrice è simmetrica e definita positiva.
+\end{itemize}
+
+La distinzione tra i due tipi risiede nel fatto che i metodi stazionari utilizzano una formula iterativa che rimane invariata a ogni passo, mentre i metodi non stazionari aggiornano dinamicamente i parametri di iterazione (come direzioni o coefficienti) in base al residuo corrente, migliorando spesso la velocità di convergenza.
+
+
+\subsection{Descrizione del progetto}
+Lo scopo del progetto è stato sviluppare una mini-libreria in Python per risolvere sistemi lineari mediante diversi metodi iterativi, \textbf{limitandosi al caso in cui la matrice \(A\) sia simmetrica e definita positiva}, con l'obiettivo finale di confrontare l’efficacia dei diversi metodi in termini di accuratezza, tempo di esecuzione e numero di iterazioni, applicandoli ad una serie di matrici sparse fornite in formato sparso .mtx e variando la tolleranza richiesta sulla soluzione.
+
+Nel progetto sono stati implementati e confrontati quattro metodi:
+\begin{enumerate}
+    \item \textbf{Metodo di Jacobi}
+    \item \textbf{Metodo di Gauss-Seidel}
+    \item \textbf{Metodo del Gradiente}
+    \item \textbf{Metodo del Gradiente Coniugato}
+\end{enumerate}
+
+
+
+\subsection{Scelte implementative}
+Il progetto è stato interamente sviluppato in \textbf{Python}, linguaggio scelto per la sua ampia diffusione in ambito scientifico e disponibilità di librerie numeriche avanzate. 
+
+\subsubsection{Supporto di matrici sparse}
+In particolare, è stata utilizzata la libreria \textbf{SciPy}, in particolare il modulo \textit{scipy.sparse}, al fine di garantire efficienza e compatibilità con \textbf{matrici sparse} in formato .mtx.\\
+La libreria è stata impiegata esclusivamente per le operazioni di base su vettori e matrici (somma, prodotto matrice-vettore, norme), evitando l’utilizzo di qualsiasi funzione già implementata per la risoluzione diretta o iterativa di sistemi lineari, come richiesto dal progetto.
+Oltre ai metodi iterativi sopra indicati si é reso quindi necessario implementare anche il metodo risolutivo per \textbf{matrici triangolari inferiori}, utilizzato dal metodo di Gauss-Seidel, in modo che supportasse matrici in \textbf{formato sparso}.\\
+
+\subsubsection{Criterio di arresto}
+
+Tutti i metodi iterativi implementati partono da vettore iniziale nullo e si arrestano al soddisfacimento del criterio basato sulla norma relativa del residuo:
+
+\[
+\frac{\|Ax^{(k)} - b\|}{\|b\|} < \text{tol}
+\]
+
+dove tol è un parametro di \textbf{tolleranza} specificato dall’utente, oppure qualora venga superato un \textbf{numero massimo di iterazioni} maxIter, di default a 20.000 iterazioni, in modo da prevenire cicli infiniti in caso di mancata convergenza.\\
+
+\subsubsection{Procedura di Validazione}
+
+Per verificare il corretto funzionamento dei metodi iterativi implementati e valutarne le prestazioni in condizioni controllate, è stata seguita la procedura standard di validazione descritta nel testo dell'esercizio. Tale procedura prevede la generazione artificiale del termine noto \( b \), partendo da una soluzione esatta nota, al fine di poter confrontare accuratamente la soluzione calcolata dai metodi iterativi con quella teorica.
+
+La procedura si articola nei seguenti passaggi:
+
+\begin{enumerate}
+    \item \textbf{Definizione della soluzione esatta:} viene fissato un vettore \( x \in \mathbb{R}^n \) tale che
+    \[
+    x = \begin{bmatrix} 1 & 1 & \dots & 1 \end{bmatrix}^T
+    \]
+    ovvero un vettore colonna in cui tutte le entrate sono uguali a 1.
+
+    \item \textbf{Costruzione del termine noto:} dato il vettore \( x \) e una matrice \( A \) simmetrica definita positiva (le matrici \texttt{spa1.mtx}, \texttt{spa2.mtx}, \texttt{vem1.mtx}, \texttt{vem2.mtx}), si costruisce il termine noto come
+    \[
+    b = A x
+    \]
+
+    \item \textbf{Risoluzione del sistema:} si risolve il sistema lineare
+    \[
+    A \hat{x} = b
+    \]
+    utilizzando ciascuno dei quattro metodi iterativi implementati (Jacobi, Gauss-Seidel, Gradiente, Gradiente Coniugato), partendo da una condizione iniziale nulla (cioè \(\hat{x}^{(0)} = 0\)).
+
+    \item \textbf{Valutazione dell'errore relativo:} si confronta la soluzione approssimata \( \hat{x} \) ottenuta da ciascun metodo con la soluzione esatta \( x \), calcolando l'errore relativo in norma euclidea:
+    \[
+    \text{Errore relativo} = \frac{\| \hat{x} - x \|_2}{\| x \|_2}
+    \]
+
+    \item \textbf{Ripetizione con diverse tolleranze:} la procedura è stata eseguita per diversi valori di tolleranza:
+    \[
+    \text{tol} \in \left\{ 10^{-4}, 10^{-6}, 10^{-8}, 10^{-10} \right\}
+    \]
+    per valutare l'impatto della precisione richiesta sulle performance e sul numero di iterazioni necessarie.
+
+\end{enumerate}
+
+Questa strategia consente di validare sia la correttezza dell'implementazione dei metodi, sia la loro capacità di convergere alla soluzione teorica con un livello di accuratezza controllabile. Inoltre, permette un confronto equo tra i metodi iterativi in termini di velocità di convergenza e stabilità numerica.
+
+
+\subsubsection{Efficienza computazionale}
+Un’attenzione particolare è stata posta anche sull’efficienza: si è scelto di \textbf{calcolare esplicitamente il residuo \(r = Ax - b\)} ad ogni iterazione e usarlo direttamente per valutare il criterio di arresto, evitando di calcolare \(Ax\) due volte per ogni iterazione. Questo ha permesso di ottimizzare i tempi di esecuzione, pur mantenendo la piena correttezza numerica.\\
+
+
+
+\subsection{Gestione dei dati e visualizzazione}
+
+Le matrici fornite nel formato \texttt{.mtx} sono state caricate utilizzando le funzionalità di \texttt{scipy.io}, convertendole in formato \texttt{csr\_matrix} per garantire operazioni efficienti su strutture sparse. I risultati ottenuti dai vari metodi sono stati raccolti e analizzati automaticamente attraverso moduli dedicati alla valutazione (\texttt{benchmark.py}) e alla generazione di grafici comparativi (\texttt{compare\_plot.py}).
+
+Tutti i test sono stati effettuati tramite uno script centralizzato, che esegue in sequenza i metodi implementati su tutte le matrici e tolleranze richieste, registrando numero di iterazioni, tempo di esecuzione e errore relativo.\\
+
+Nei paragrafi successivi si descrivono l’architettura della libreria sviluppata, i dettagli implementativi dei metodi e i risultati ottenuti su matrici sparse reali.
