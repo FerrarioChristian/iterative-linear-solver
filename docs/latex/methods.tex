@@ -1,0 +1,183 @@
+\section{Metodi Iterativi Implementati}
+
+In questa sezione vengono descritti i quattro metodi iterativi implementati nel progetto: Jacobi, Gauss-Seidel, Gradiente e Gradiente Coniugato. Per ciascun metodo, si fornisce una breve descrizione teorica e lo pseudocodice.
+
+\subsection{Metodo di Jacobi}
+
+\subsubsection*{Descrizione Teorica}
+
+Il metodo di Jacobi è un algoritmo iterativo per la risoluzione di sistemi lineari del tipo $Ax = b$, dove $A$ è una matrice diagonale dominante. L'algoritmo si basa sulla decomposizione della matrice $A$ come $A = D + R$, dove $D$ è la parte diagonale e $R$ il resto. L'iterazione è definita da:
+
+\[
+x^{(k+1)} = x^{(k)} + D^{-1}(b - Ax^{(k)})
+\]
+
+\subsubsection*{Proprietà}
+\begin{itemize}
+    \item Converge se la matrice è a \textbf{dominanza diagonale} (condizione sufficiente ma non necessaria).
+    \item Costo per iterazione: \(O(n^2)\).
+    \item Residuo calcolabile direttamente.
+\end{itemize}
+
+\subsubsection*{Pseudocodice}
+
+\begin{footnotesize}
+\begin{verbatim}
+Input: A, b, x^(0), tol, maxIter
+Output: x^(k+1)
+
+1.  k = 0
+2.  while k < maxIter:
+3.      x_new = x_old + D^{-1}(b - A * x_old)
+4.      if ||x_new - x_old|| < tol:
+5.          break
+6.      x_old = x_new
+7.      k = k + 1
+8.  return x_new
+\end{verbatim}
+\end{footnotesize}
+
+\subsection{Metodo di Gauss-Seidel}
+
+\subsubsection*{Descrizione Teorica}
+
+Il metodo di Gauss-Seidel è simile al metodo di Jacobi, ma utilizza le informazioni più recenti disponibili durante l'iterazione. La matrice $A$ è decomposta come $A = L + U$, dove $L$ è la parte inferiore (inclusa la diagonale) e $U$ la parte superiore. L'iterazione è definita da:
+
+\[
+x^{(k+1)} = x^{(k)} + L^{-1}r^{(k)}
+\]
+
+dove
+
+\[
+r^{(k)} = b - Ax^{(k)}
+\]
+
+ma siccome calccolare l'inverso di L, si risolve invece il sistema tramite il metodo lower\_triangular\_solve
+\[
+Ly = r^{(k)} 
+\]
+
+
+\subsubsection*{Proprietà}
+\begin{itemize}
+    \item Converge se la matrice è a \textbf{dominanza diagonale} (condizione sufficiente ma non necessaria).
+    \item Richiede risoluzione di un sistema triangolare per iterazione, costo \(O(n^2)\).
+    \item Ogni iterazione più onerosa rispetto a Jacobi, ma spesso più efficace.
+\end{itemize}
+
+\subsubsection*{Pseudocodice}
+\begin{footnotesize}
+\begin{verbatim}
+Input: A, b, x^(0), tol, maxIter
+Output: x^(k+1)
+
+1.  k = 0
+2.    L := lower_triangular(A)
+3.  while k < maxIter:
+4.        r = b - A @ x_old
+5.      x_new = x_old + lower_triangular_solve(L, r)
+6.  return x
+\end{verbatim}
+\end{footnotesize}
+
+\subsection{Metodo del Gradiente}
+
+\subsubsection*{Descrizione Teorica}
+
+Il metodo del gradiente, noto anche come discesa del gradiente, è un algoritmo iterativo per la risoluzione di sistemi lineari simmetrici e definiti positivi. L'algoritmo minimizza la funzione obiettivo:
+
+\[
+f(x) = \frac{1}{2}x^T A x - b^T x
+\]
+
+L'iterazione è definita da:
+
+\[
+x^{(k+1)} = x^{(k)} - \alpha^{(k)} \nabla f(x^{(k)})
+\]
+
+dove $\nabla f(x^{(k)}) = A x^{(k)} - b$ e $\alpha^{(k)}$ è il passo ottimale calcolato come:
+
+\[
+\alpha^{(k)} = \frac{r^{(k)T} r^{(k)}}{r^{(k)T} A r^{(k)}}
+\]
+
+\subsubsection*{Proprietà}
+\begin{itemize}
+    \item Richiede che \(A\) sia \textbf{simmetrica e definita positiva}.
+    \item Interpretabile come discesa del gradiente su una funzione quadratica.
+    \item È \textbf{non stazionario}, costo per iterazione \(O(n^2)\).
+    \item Sensibile al condizionamento della matrice.
+\end{itemize}
+
+\subsubsection*{Pseudocodice}
+
+\begin{footnotesize}
+\begin{verbatim}
+Input: A, b, x^(0), tol, maxIter
+Output: x^(k+1)
+
+1.  r = b - A x
+2.  k = 0
+3.  while k < maxIter:
+4.      alpha = (r^T r) / (r^T A r)
+5.      x = x + alpha * r
+6.      r = b - A x
+7.      if ||r|| < tol:
+8.          break
+9.      k = k + 1
+10. return x
+\end{verbatim}
+\end{footnotesize}
+
+
+\subsection{Metodo del Gradiente Coniugato}
+
+\subsubsection*{Descrizione Teorica}
+
+Il metodo del gradiente coniugato è un algoritmo iterativo efficiente per la risoluzione di sistemi lineari simmetrici e definiti positivi. L'algoritmo genera una sequenza di direzioni coniugate rispetto a $A$ e aggiorna la soluzione lungo queste direzioni. L'iterazione è definita da:
+
+\[
+\begin{aligned}
+r^{(k)} &= b - A x^{(k)} \\
+p^{(k)} &= r^{(k)} + \beta^{(k-1)} p^{(k-1)} \\
+\alpha^{(k)} &= \frac{r^{(k)T} r^{(k)}}{p^{(k)T} A p^{(k)}} \\
+x^{(k+1)} &= x^{(k)} + \alpha^{(k)} p^{(k)} \\
+r^{(k+1)} &= r^{(k)} - \alpha^{(k)} A p^{(k)} \\
+\beta^{(k)} &= \frac{r^{(k+1)T} r^{(k+1)}}{r^{(k)T} r^{(k)}}
+\end{aligned}
+\]
+
+\subsubsection*{Proprietà}
+\begin{itemize}
+    \item Miglioramento del gradiente classico, converge in \textbf{al più \(n\) iterazioni} per matrici \(n \times n\).
+    \item Vettori direzione coniugati rispetto ad \(A\).
+    \item Iterazione al costo \(O(n^2)\), ma molto più veloce in pratica.
+    \item Soluzione ottimale in sottospazi di dimensione crescente.
+\end{itemize}
+
+\subsubsection*{Pseudocodice}
+
+\begin{footnotesize}
+\begin{verbatim}
+Input: A, b, x^(0), tol, maxIter
+Output: x^(k+1)
+
+1.  r = b - A x
+2.  p = r
+3.  k = 0
+4.  while k < maxIter:
+5.      alpha = (r^T r) / (p^T A p)
+6.      x = x + alpha * p
+7.      r_new = r - alpha * A p
+8.      if ||r_new|| < tol:
+9.          break
+10.     beta = (r_new^T r_new) / (r^T r)
+11.     p = r_new + beta * p
+12.     r = r_new
+13.     k = k + 1
+14. return x
+\end{verbatim}
+\end{footnotesize}
+
