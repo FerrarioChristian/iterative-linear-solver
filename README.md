@@ -23,17 +23,24 @@
 
 ## Installation
 
+This project uses Python 3 and open-source libraries only.
+
+### 1. Clone the repository
 ```bash
-# Clone the project
-git clone git@github.com:FerrarioChristian/iterative-linear-solver.git
+git clone https://github.com/FerrarioChristian/iterative-linear-solver.git
 cd iterative-linear-solver
+```
 
-# Create the virtual environment
+### 2. Create a virtual environment (optional but recommended)
+```bash
 python3 -m venv .venv
+source .venv/bin/activate # On Windows use `venv\Scripts\activate`
+```
 
+### 3. Install dependencies
+```bash
 # Install the dependencies
 pip install -e .
-
 ```
 
 ## Usage
@@ -50,7 +57,7 @@ linear-solver-demo [-h] [-it MAX_ITER] [-sc] [--spy] [-t TOLERANCES ...]
 `--spy`: Generate a spy plot of the matrices  
 `-t, --tolerances`: Set a list of tolerances (default [1e-4, 1e-6, 1e-8, 1e-10])  
 
-Results will be saved in restuls.csv and plots will be generated in the `results/:plots` directory
+Results will be saved in restuls.csv and plots will be generated in the `results/plots` directory
 
 ## Library functions
 
