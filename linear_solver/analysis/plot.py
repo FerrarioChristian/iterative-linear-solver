@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def spy_matrices(*matrices, save_path: Optional[str] = None):
+def spy_matrices(*matrices, save_path: Optional[str] = None, matrix_names) -> None:
     """
     Visualize the matrices in sparse format.
     :param matrices: Matrices to visualize. If a single iterable is provided, it will be unpacked.
@@ -38,7 +38,9 @@ def spy_matrices(*matrices, save_path: Optional[str] = None):
             sparsity_percentage = (nnz / total_elements) * 100
 
             axs[i].spy(matrix)
-            axs[i].set_title(f"Matrice {i+1}")
+            axs[i].set_title(
+                f"Matrice {i+1}" if not matrix_names else f"{matrix_names[i]}"
+            )
             axs[i].set_xlabel(f"Densità: {sparsity_percentage:.2f}%")
 
         except Exception as e:

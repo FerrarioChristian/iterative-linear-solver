@@ -15,6 +15,8 @@ from .base_solver import BaseIterativeSolver
 class GaussSeidelSolver(BaseIterativeSolver):
     """
     Gauss-Seidel method for solving linear systems.
+    This method iteratively refines the solution to the system of equations Ax = b,
+    where A is a square matrix, x is the solution vector, and b is the right-hand side vector.
     """
 
     def solve(
@@ -23,6 +25,14 @@ class GaussSeidelSolver(BaseIterativeSolver):
         max_iter: Optional[int] = None,
         stopping_criterion: StoppingCriterion = default_stopping_criterion,
     ) -> np.ndarray:
+        """
+        Solve the linear system Ax = b using the Gauss-Seidel method.
+            :param tol: Tolerance for convergence.
+            :param max_iter: Maximum number of iterations.
+            :param stopping_criterion: Function to determine when to stop the iterations.
+            :return: The solution vector x.
+        """
+
         self.tol = tol if tol is not None else self.tol
         self.max_iter = max_iter if max_iter is not None else self.max_iter
         self._iterations = 0

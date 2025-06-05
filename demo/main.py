@@ -28,7 +28,8 @@ def main():
 
     if spy:
         to_plot = [load_matrix(matrix) for matrix in MATRICES]
-        spy_matrices(to_plot, save_path=output_dir)
+        matrix_names = [Path(matrix).name for matrix in MATRICES]
+        spy_matrices(to_plot, save_path=output_dir, matrix_names=matrix_names)
         return
 
     df = run_benchmark(
