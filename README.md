@@ -54,10 +54,11 @@ linear-solver-demo [-h] [-it MAX_ITER] [-sc] [--spy] [-t TOLERANCES ...]
 `-h, --help`: Show this help message and exit  
 `-it, --max-iter`: Set maximum iterations (default 20000)  
 `-sc, --skip-check`: Skip matrix property check  
+`-o, --output-dir`: Specify output directory for the generated plots (Optional *)
 `--spy`: Generate a spy plot of the matrices  
 `-t, --tolerances`: Set a list of tolerances (default [1e-4, 1e-6, 1e-8, 1e-10])  
 
-Results will be saved in restuls.csv and plots will be generated in the `results/plots` directory
+* If `-o` is omitted the plots are only shown, if `-o` is specified without value the results will be saved in restults.csv and plots will be generated in the `results/plots` directory, if a path is specified the results will be stored in the given directory
 
 ## Library functions
 
